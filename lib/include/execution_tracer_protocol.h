@@ -1,0 +1,24 @@
+/*
+ * execution_tracer_protocol.h
+ *
+ *  Created on: Oct 23, 2022
+ *      Author: Aaron Fontaine
+ */
+
+#ifndef LIB_INCLUDE_EXECUTION_TRACER_PROTOCOL_H_
+#define LIB_INCLUDE_EXECUTION_TRACER_PROTOCOL_H_
+
+#define TRACE_PROTOCOL_MAJOR	1
+#define TRACE_PROTOCOL_MINOR	0
+
+
+#define TRACE_IDCODE_VERSION		    0
+#define TRACE_IDCODE_MCU_RESET		    1
+#define TRACE_IDCODE_FUNCTION_ENTRY	    2
+#define TRACE_IDCODE_FUNCTION_EXIT	    3
+#define TRACE_IDCODE_FILE_AND_LINE	    4
+#define TRACE_IDCODE_VARIABLE_VALUE	    5
+#define TRACE_IDCODE_SFR_VALUE		    6
+
+
+#endif /* LIB_INCLUDE_EXECUTION_TRACER_PROTOCOL_H_ */
