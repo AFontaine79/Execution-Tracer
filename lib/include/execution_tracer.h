@@ -8,13 +8,23 @@
 #ifndef LIB_INCLUDE_EXECUTION_TRACER_H_
 #define LIB_INCLUDE_EXECUTION_TRACER_H_
 
+#include <stdint.h>
+#include <stdbool.h>
+
 #include "execution_tracer_conf.h"
 
 /* Check whether BUFFER_LENGTH_IN_WORDS is a power of 2 is in .c file */
 #define BUFFER_INDEX_MASK   (BUFFER_LENGTH_IN_WORDS - 1)
+#define BUFFER_MAX_CAPACITY (BUFFER_LENGTH_IN_WORDS - 1)
 
 #define TRACE_IsEmpty()     (m_exec_trace.head == m_exec_trace.tail)
 #define TRACE_IsFull()      (((m_exec_trace.head + 1) & BUFFER_INDEX_MASK) == m_exec_trace.tail)
+
+#define TRACE_Clear()                                           \
+    do {                                                        \
+        m_exec_trace.head = 0;                                  \
+        m_exec_trace.tail = 0;                                  \
+    } while (0)
 
 #if ALLOW_OVERWRITE
 #define TRACE_Put(n)                                            \
@@ -27,6 +37,7 @@
         m_exec_trace.head &= BUFFER_INDEX_MASK;                 \
     } while (0)
 #else
+#define TRACE_Put(n)                                            \
     do {                                                        \
         if (!TRACE_IsFull()) {                                  \
             m_exec_trace.trace_buffer[m_exec_trace.head++] = n; \
@@ -34,6 +45,11 @@
         }                                                       \
     } while (0)
 #endif
+
+#define TRACE_Get() TRACE_IsEmpty() ? 0 :                       \
+    (m_exec_trace.last_value = m_exec_trace.trace_buffer[m_exec_trace.tail++],   \
+    m_exec_trace.tail &= BUFFER_INDEX_MASK,                     \
+    m_exec_trace.last_value)
 
 #define TRACE_ExecTracerVersion()   TRACE_Put(                  \
     ((TRACE_IDCODE_VERSION & 0xF) << 28) &                      \
@@ -55,6 +71,7 @@ typedef struct {
     uint32_t        head;
     uint32_t        tail;
     uint32_t        trace_buffer[BUFFER_LENGTH_IN_WORDS];
+    uint32_t        last_value;
 } ExecTracer_t;
 
 

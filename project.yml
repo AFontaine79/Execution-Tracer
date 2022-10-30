@@ -1,0 +1,82 @@
+---
+
+:project:
+  :use_exceptions: FALSE
+  :use_test_preprocessor: TRUE
+  :use_auxiliary_dependencies: TRUE
+  :build_root: build
+  :release_build: TRUE
+  :test_file_prefix: test_
+  :which_ceedling: gem
+  :ceedling_version: '?'
+
+:environment:
+
+:extension:
+
+:release_build:
+
+# Note: Ceedling's search path order is: test paths, support paths, support
+# paths, include paths. Any files that come earlier in the search path order
+# will take the place of those that come later.
+:paths:
+  :test:
+    - +:test/**
+    - -:test/support
+  :source:
+    - lib/src/**
+  :support:
+    - test/support
+  :include:
+    - lib/include/**
+
+:defines:
+  # Note: Ceedling does not define a common section under defines. Instead,
+  # this is creating a YAML alias that is replaced into each test section.
+  :common: &common_defines
+    - UNIT_TEST
+    - CONFIG_FLASH_BASE=0x08000000
+    - CONFIG_RAM_BASE=0x20000000
+    - CONFIG_SFR_BASE=0x40000000
+    - CONFIG_STOP_AFTER_RESET=0
+    - CONFIG_USE_NO_INIT=0
+    - CONFIG_BUFFER_LENGTH=32
+  :overwrite_disabled: &overwrite_disabled_defines
+    - CONFIG_ALLOW_OVERWRITE=0
+  :overwite_enabled: &overwrite_enabled_defines
+    - CONFIG_ALLOW_OVERWRITE=1
+  :test:
+    - *common_defines
+    - *overwrite_disabled_defines
+  :test_get_and_put_overwrite_disabled:
+    - *common_defines
+    - *overwrite_disabled_defines
+  :test_get_and_put_overwrite_enabled:
+    - *common_defines
+    - *overwrite_enabled_defines
+
+:cmock:
+  :mock_prefix: mock_
+  :when_no_prototypes: :warn
+  :enforce_strict_ordering: TRUE
+  :plugins:
+    - :ignore
+  :treat_as:
+    uint8:    HEX8
+    uint16:   HEX16
+    uint32:   UINT32
+    int8:     INT8
+    bool:     UINT8
+
+#:tools:
+# Ceedling defaults to using gcc for compiling, linking, etc.
+# As [:tools] is blank, gcc will be used (so long as it's in your system path)
+# See documentation to configure a given toolchain for use
+
+:plugins:
+  :load_paths:
+    - "#{Ceedling.load_path}"
+  :enabled:
+    - stdout_pretty_tests_report
+    - module_generator
+...
