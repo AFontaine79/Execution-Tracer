@@ -8,10 +8,14 @@
 
 #include "unity.h"
 #include "execution_tracer.h"
+#include "helper_functions.h"
 
 #define TEST_VALUE_1        0x11111111
 #define TEST_VALUE_2        0x22222222
 #define TEST_VALUE_3        0x33333333
+
+#define TEST_VALUE_A        0xAAAAAAAA
+#define TEST_VALUE_C        0xCCCCCCCC
 
 void setUp(void)
 {
@@ -23,38 +27,26 @@ void tearDown(void)
 
 }
 
-void helper_FillEntireQueueWithValue(uint32_t value)
-{
-    TEST_ASSERT_EQUAL(true, TRACE_IsEmpty());
-    for(int count = 0; count < (BUFFER_MAX_CAPACITY - 1); count++)
-    {
-        TRACE_Put(value);
-        TEST_ASSERT_EQUAL(false, TRACE_IsFull());
-    }
-    TRACE_Put(value);
-    TEST_ASSERT_EQUAL(true, TRACE_IsFull());
-}
-
 void test_NewTraceQueueReportsIsEmptyAsTrueAndNotFullAsFalse(void)
 {
-    TEST_ASSERT_EQUAL(true, TRACE_IsEmpty());
-    TEST_ASSERT_EQUAL(false, TRACE_IsFull());
+    TEST_ASSERT_TRUE(TRACE_IsEmpty());
+    TEST_ASSERT_FALSE(TRACE_IsFull());
 }
 
 void test_GetReturnsPreviouslyWrittenValue(void)
 {
     TRACE_Put(TEST_VALUE_1);
-    TEST_ASSERT_EQUAL(TEST_VALUE_1, TRACE_Get());
+    TEST_ASSERT_EQUAL_UINT32(TEST_VALUE_1, TRACE_Get());
 
     TRACE_Put(TEST_VALUE_2);
-    TEST_ASSERT_EQUAL(TEST_VALUE_2, TRACE_Get());
+    TEST_ASSERT_EQUAL_UINT32(TEST_VALUE_2, TRACE_Get());
 
     TRACE_Put(TEST_VALUE_1);
     TRACE_Put(TEST_VALUE_2);
     TRACE_Put(TEST_VALUE_3);
-    TEST_ASSERT_EQUAL(TEST_VALUE_1, TRACE_Get());
-    TEST_ASSERT_EQUAL(TEST_VALUE_2, TRACE_Get());
-    TEST_ASSERT_EQUAL(TEST_VALUE_3, TRACE_Get());
+    TEST_ASSERT_EQUAL_UINT32(TEST_VALUE_1, TRACE_Get());
+    TEST_ASSERT_EQUAL_UINT32(TEST_VALUE_2, TRACE_Get());
+    TEST_ASSERT_EQUAL_UINT32(TEST_VALUE_3, TRACE_Get());
 }
 
 void test_GetReturnsZeroIfQueueIsEmpty(void)
@@ -66,19 +58,51 @@ void test_GetReturnsZeroIfQueueIsEmpty(void)
 
 void test_QueueReportsEmptyAfterAllElementsRemoved(void)
 {
-
     TRACE_Put(TEST_VALUE_1);
     TRACE_Put(TEST_VALUE_2);
     TRACE_Put(TEST_VALUE_3);
-    TEST_ASSERT_EQUAL(TEST_VALUE_1, TRACE_Get());
-    TEST_ASSERT_EQUAL(false, TRACE_IsEmpty());
-    TEST_ASSERT_EQUAL(TEST_VALUE_2, TRACE_Get());
-    TEST_ASSERT_EQUAL(false, TRACE_IsEmpty());
-    TEST_ASSERT_EQUAL(TEST_VALUE_3, TRACE_Get());
-    TEST_ASSERT_EQUAL(true, TRACE_IsEmpty());
+    TEST_ASSERT_EQUAL_UINT32(TEST_VALUE_1, TRACE_Get());
+    TEST_ASSERT_FALSE(TRACE_IsEmpty());
+    TEST_ASSERT_EQUAL_UINT32(TEST_VALUE_2, TRACE_Get());
+    TEST_ASSERT_FALSE(TRACE_IsEmpty());
+    TEST_ASSERT_EQUAL_UINT32(TEST_VALUE_3, TRACE_Get());
+    TEST_ASSERT_TRUE(TRACE_IsEmpty());
 }
 
-void test_QueueReportsFullWhenFilledCompletely(void)
+void test_QueueReportsFullWhenHeadAndTailWrapAround(void)
 {
-    helper_FillEntireQueueWithValue(0xCCCCCCCC);
+    helper_FillEntireQueueWithValue(TEST_VALUE_C);
+    TEST_ASSERT_TRUE(TRACE_IsFull());
+}
+
+void test_QueueReportsFullWhenHeadAndTailAreAdjacent(void)
+{
+    /* Offset so we don't test wraparound condition */
+    TRACE_Put(TEST_VALUE_1);
+    TRACE_Get();
+
+    helper_FillEntireQueueWithValue(TEST_VALUE_C);
+    TEST_ASSERT_TRUE(TRACE_IsFull());
+
+    /* Move forward five spaces and repeat test */
+    for(int index = 0; index < 5; index++) {
+        TRACE_Get();
+        TRACE_Put(TEST_VALUE_C);
+    }
+    TEST_ASSERT_TRUE(TRACE_IsFull());
+
+    /* Final test with head and tail at last and 2nd-to-last elements */
+    for(int index = 0; index < (BUFFER_MAX_CAPACITY - 6); index++) {
+        TRACE_Get();
+        TRACE_Put(TEST_VALUE_C);
+    }
+    TEST_ASSERT_TRUE(TRACE_IsFull());
+}
+
+void test_GetThenPutWithQueueFullAtWraparound(void)
+{
+    test_QueueReportsFullWhenHeadAndTailAreAdjacent();
+    TRACE_Get();
+    TRACE_Put(TEST_VALUE_C);
+    TEST_ASSERT_TRUE(TRACE_IsFull());
 }

@@ -14,11 +14,12 @@
 #include "execution_tracer_conf.h"
 
 /* Check whether BUFFER_LENGTH_IN_WORDS is a power of 2 is in .c file */
-#define BUFFER_INDEX_MASK   (BUFFER_LENGTH_IN_WORDS - 1)
-#define BUFFER_MAX_CAPACITY (BUFFER_LENGTH_IN_WORDS - 1)
+#define BUFFER_INDEX_MASK       (BUFFER_LENGTH_IN_WORDS - 1)
+#define BUFFER_MAX_CAPACITY     (BUFFER_LENGTH_IN_WORDS - 1)
 
-#define TRACE_IsEmpty()     (m_exec_trace.head == m_exec_trace.tail)
-#define TRACE_IsFull()      (((m_exec_trace.head + 1) & BUFFER_INDEX_MASK) == m_exec_trace.tail)
+#define TRACE_IsEmpty()         (m_exec_trace.head == m_exec_trace.tail)
+#define TRACE_IsFull()          (((m_exec_trace.head + 1) & BUFFER_INDEX_MASK) == m_exec_trace.tail)
+#define TRACE_GetNumEntries()   ((m_exec_trace.head - m_exec_trace.tail) & BUFFER_INDEX_MASK)
 
 #define TRACE_Clear()                                           \
     do {                                                        \
