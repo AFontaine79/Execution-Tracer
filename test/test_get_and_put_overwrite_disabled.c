@@ -24,10 +24,9 @@ void setUp(void)
 
 void tearDown(void)
 {
-
 }
 
-void test_NewTraceQueueReportsIsEmptyAsTrueAndNotFullAsFalse(void)
+void test_NewQueueIsEmptyAndNotFull(void)
 {
     TEST_ASSERT_TRUE(TRACE_IsEmpty());
     TEST_ASSERT_FALSE(TRACE_IsFull());
@@ -105,4 +104,37 @@ void test_GetThenPutWithQueueFullAtWraparound(void)
     TRACE_Get();
     TRACE_Put(TEST_VALUE_C);
     TEST_ASSERT_TRUE(TRACE_IsFull());
+}
+
+void test_NewQueueHasZeroEntries(void)
+{
+    TEST_ASSERT_EQUAL_UINT32(0, TRACE_GetNumEntries());
+}
+
+void test_GetNumEntriesWorksForNonWrapAround(void)
+{
+    helper_WriteNEntriesToQueue(TEST_VALUE_C, 5);
+    TEST_ASSERT_EQUAL_UINT32(5, TRACE_GetNumEntries());
+    helper_WriteNEntriesToQueue(TEST_VALUE_C, 5);
+    TEST_ASSERT_EQUAL_UINT32(10, TRACE_GetNumEntries());
+    helper_RemoveNEntriesFromQueue(3);
+    TEST_ASSERT_EQUAL_UINT32(7, TRACE_GetNumEntries());
+    helper_RemoveNEntriesFromQueue(6);
+    TEST_ASSERT_EQUAL_UINT32(1, TRACE_GetNumEntries());
+}
+
+void test_GetNumEntriesWorksForWrapAround(void)
+{
+    helper_WriteNEntriesToQueue(TEST_VALUE_C, BUFFER_MAX_CAPACITY / 2);
+    helper_EmptyQueue();
+
+    helper_FillEntireQueueWithValue(TEST_VALUE_C);
+    TEST_ASSERT_EQUAL_UINT32(BUFFER_MAX_CAPACITY, TRACE_GetNumEntries());
+
+    TRACE_Get();
+    TEST_ASSERT_EQUAL_UINT32(BUFFER_MAX_CAPACITY - 1, TRACE_GetNumEntries());
+    TRACE_Get();
+    TEST_ASSERT_EQUAL_UINT32(BUFFER_MAX_CAPACITY - 2, TRACE_GetNumEntries());
+    TRACE_Get();
+    TEST_ASSERT_EQUAL_UINT32(BUFFER_MAX_CAPACITY - 3, TRACE_GetNumEntries());
 }

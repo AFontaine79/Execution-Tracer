@@ -12,6 +12,8 @@
 #include <stdint.h>
 
 void helper_FillEntireQueueWithValue(uint32_t value);
-
+void helper_WriteNEntriesToQueue(uint32_t value, uint32_t n);
+void helper_RemoveNEntriesFromQueue(uint32_t n);
+void helper_EmptyQueue(void);
 
 #endif /* TEST_SUPPORT_HELPER_FUNCTIONS_H_ */
