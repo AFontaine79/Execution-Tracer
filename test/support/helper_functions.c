@@ -25,6 +25,24 @@ void helper_WriteNEntriesToQueue(uint32_t value, uint32_t n)
     }
 }
 
+void helper_VerifyEntireQueue(uint32_t value)
+{
+    while(!TRACE_IsEmpty())
+    {
+        TEST_ASSERT_EQUAL_UINT32(value, TRACE_Get());
+    }
+}
+
+void helper_VerifyNEntriesInQueue(uint32_t value, uint32_t n)
+{
+    TEST_ASSERT_GREATER_OR_EQUAL_UINT32(n, TRACE_GetNumEntries());
+    for(int index = 0; index < n; index++)
+    {
+        TEST_ASSERT_EQUAL_UINT32(value, TRACE_Get());
+    }
+
+}
+
 void helper_RemoveNEntriesFromQueue(uint32_t n)
 {
     for(int index = 0; index < n; index++)

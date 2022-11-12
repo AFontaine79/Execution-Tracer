@@ -13,6 +13,8 @@
 
 void helper_FillEntireQueueWithValue(uint32_t value);
 void helper_WriteNEntriesToQueue(uint32_t value, uint32_t n);
+void helper_VerifyEntireQueue(uint32_t value);
+void helper_VerifyNEntriesInQueue(uint32_t value, uint32_t n);
 void helper_RemoveNEntriesFromQueue(uint32_t n);
 void helper_EmptyQueue(void);
 
