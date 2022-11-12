@@ -30,6 +30,14 @@
   :include:
     - lib/include/**
 
+# This configuration is set up to run different test files with different
+# compile-time configuration values loaded in execution_tracer_conf.h.
+# Although this works, it comes at the cost of forcing Ceedling to do
+# extra recompiles where they would otherwise be unnecessary, which slows
+# down the red-green-refactor cycle time.
+# This problem can be avoided by specifying only one file at a time to
+# Ceedling on the command line.  As long as that is the only file being
+# worked on, Ceedling understands to only perform incremental builds.
 :defines:
   # Note: Ceedling does not define a common section under defines. Instead,
   # this is creating a YAML alias that is replaced into each test section.
