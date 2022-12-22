@@ -18,4 +18,7 @@ void helper_VerifyNEntriesInQueue(uint32_t value, uint32_t n);
 void helper_RemoveNEntriesFromQueue(uint32_t n);
 void helper_EmptyQueue(void);
 
+void helper_VerifyExecTracerVersionTrace(void);
+void helper_VerifyProcessorResetTrace(uint32_t value);
+
 #endif /* TEST_SUPPORT_HELPER_FUNCTIONS_H_ */

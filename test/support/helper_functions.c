@@ -58,3 +58,19 @@ void helper_EmptyQueue(void)
         TRACE_Get();
     }
 }
+
+void helper_VerifyExecTracerVersionTrace(void)
+{
+    uint32_t value = TRACE_Get();
+    TEST_ASSERT_EQUAL_UINT8(TRACE_IDCODE_VERSION, (uint8_t)((value >> 28) & 0xF));
+    TEST_ASSERT_EQUAL_UINT8('V', (uint8_t)((value >> 16) & 0xFF));
+    TEST_ASSERT_EQUAL_UINT8(TRACE_PROTOCOL_MAJOR, (uint8_t)((value >> 8) & 0xFF));
+    TEST_ASSERT_EQUAL_UINT8(TRACE_PROTOCOL_MINOR, (uint8_t)(value & 0xFF));
+}
+
+void helper_VerifyProcessorResetTrace(uint32_t exp_value)
+{
+    uint32_t value = TRACE_Get();
+    TEST_ASSERT_EQUAL_UINT8(TRACE_IDCODE_RESET, (uint8_t)((value >> 28) & 0xF));
+    TEST_ASSERT_EQUAL_UINT32(exp_value, (value & 0xFFFFFFF));
+}
