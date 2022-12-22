@@ -11,8 +11,25 @@
 #include "execution_tracer.h"
 #include "helper_functions.h"
 
+#define TRACE_MODULE        1
+
 #define FAKE_RCC_CSR_VALUE      0x20000000                      /* IWDG reset on ST MCU */
 #define RESET_TEST_VALUE        (FAKE_RCC_CSR_VALUE >> 24)      /* Reset flags use the top 8 bits of RCC->CSR */
+
+void tracedFunction(void)
+{
+    TRACE_FunctionEntry(tracedFunction);
+    TRACE_FunctionExit(tracedFunction);
+}
+
+#define FIRST_TRACED_LINE       30
+#define SECOND_TRACED_LINE      31
+void tracedLines(void)
+{
+    _Static_assert(__LINE__ == 29, "Adjust FIRST_TRACED_LINE, SECOND_TRACED_LINE and this check");
+    TRACE_Line(TRACE_MODULE);
+    TRACE_Line(TRACE_MODULE);
+}
 
 void setUp(void)
 {
@@ -21,12 +38,6 @@ void setUp(void)
 
 void tearDown(void)
 {
-}
-
-void tracedFunction(void)
-{
-    TRACE_FunctionEntry(tracedFunction);
-    TRACE_FunctionExit(tracedFunction);
 }
 
 
@@ -56,4 +67,11 @@ void test_TraceFunctionEntryAndExit(void)
     exitValue &= 0xFFFFFFF;
     TEST_ASSERT_EQUAL(entryValue, exitValue);
     printf("Verify in the map file that tracedFunction() is at 0x%08X", (entryValue + FLASH_BASE));
+}
+
+void test_TraceLine(void)
+{
+    tracedLines();
+    helper_VerifyLineTrace(TRACE_MODULE, FIRST_TRACED_LINE);
+    helper_VerifyLineTrace(TRACE_MODULE, SECOND_TRACED_LINE);
 }

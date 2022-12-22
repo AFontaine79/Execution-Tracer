@@ -20,5 +20,6 @@ void helper_EmptyQueue(void);
 
 void helper_VerifyExecTracerVersionTrace(void);
 void helper_VerifyProcessorResetTrace(uint32_t value);
+void helper_VerifyLineTrace(uint32_t module, uint32_t line_num);
 
 #endif /* TEST_SUPPORT_HELPER_FUNCTIONS_H_ */

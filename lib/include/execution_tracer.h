@@ -120,7 +120,18 @@
     ((TRACE_IDCODE_FUNC_EXIT & 0xF) << 28) |                    \
     (((uint32_t)funcAddr - FLASH_BASE) & 0xFFFFFFF))
 
-#define TRACE_Line()
+/**
+ * @brief       Trace file and line number
+ * Note:        The file name itself is not traced. Instead the user must pass
+ *              a "module identifier" that will be masked into the value.
+ * param[in]    module - An integer identifier used to identify the file when
+ *              analyzing the trace buffer.
+ */
+#define TRACE_Line(module)  TRACE_Put(                          \
+    ((TRACE_IDCODE_FILE_AND_LINE & 0xF) << 28) |                \
+    ((module & 0xFFF) << 16) |                                  \
+    (__LINE__ & 0xFFFF))
+
 #define TRACE_VariableValue()
 #define TRACE_SFRValue()
 

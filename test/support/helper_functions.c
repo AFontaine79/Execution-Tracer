@@ -74,3 +74,11 @@ void helper_VerifyProcessorResetTrace(uint32_t exp_value)
     TEST_ASSERT_EQUAL_UINT8(TRACE_IDCODE_RESET, (uint8_t)((value >> 28) & 0xF));
     TEST_ASSERT_EQUAL_UINT32(exp_value, (value & 0xFFFFFFF));
 }
+
+void helper_VerifyLineTrace(uint32_t module, uint32_t line_num)
+{
+    uint32_t value = TRACE_Get();
+    TEST_ASSERT_EQUAL_UINT8(TRACE_IDCODE_FILE_AND_LINE, (uint8_t)((value >> 28) & 0xF));
+    TEST_ASSERT_EQUAL_UINT32(module, (value >> 16) & 0xFFF);
+    TEST_ASSERT_EQUAL_UINT32(line_num, value & 0xFFFF);
+}
