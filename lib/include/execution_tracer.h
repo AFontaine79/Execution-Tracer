@@ -12,23 +12,7 @@
 #include <stdbool.h>
 
 #include "execution_tracer_conf.h"
-
-/**
- * Having the protocol version in the trace buffer allows backwards
- * compatibility for the analyzer even for breaking changes.
- */
-#define TRACE_PROTOCOL_MAJOR        1       /* Update for breaking changes */
-#define TRACE_PROTOCOL_MINOR        0       /* Update for non-breaking changes */
-
-/**
- * ID codes occupy the top 4 bits of each trace entry and identify
- * what type of entry it is and how it is to be decoded.
- */
-#define TRACE_IDCODE_INVALID        0
-#define TRACE_IDCODE_VERSION        1
-#define TRACE_IDCODE_RESET          2
-#define TRACE_IDCODE_FUNC_ENTRY     3
-#define TRACE_IDCODE_FUNC_EXIT      4
+#include "execution_tracer_protocol.h"
 
 /* Check whether BUFFER_LENGTH_IN_WORDS is a power of 2 is in .c file */
 #define BUFFER_INDEX_MASK       (BUFFER_LENGTH_IN_WORDS - 1)
