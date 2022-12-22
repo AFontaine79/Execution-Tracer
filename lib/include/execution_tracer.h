@@ -27,6 +27,8 @@
 #define TRACE_IDCODE_INVALID        0
 #define TRACE_IDCODE_VERSION        1
 #define TRACE_IDCODE_RESET          2
+#define TRACE_IDCODE_FUNC_ENTRY     3
+#define TRACE_IDCODE_FUNC_EXIT      4
 
 /* Check whether BUFFER_LENGTH_IN_WORDS is a power of 2 is in .c file */
 #define BUFFER_INDEX_MASK       (BUFFER_LENGTH_IN_WORDS - 1)
@@ -104,8 +106,36 @@
     ((TRACE_IDCODE_RESET & 0xF) << 28) |                        \
     (reset_reg & 0xFFFFFFF))
 
-#define TRACE_FunctionEntry()
-#define TRACE_FunctionExit()
+/**
+ * @brief       Trace function entry and exit
+ *              For all functions you wish to trace:
+ *              - Place TRACE_FunctionEntry() as the first line of the function
+ *              - Place TRACE_FunctionEntry() as the last line of the function
+ *              These macros are valid also for ISRs.
+ * @param[in]   funcAddr - Pass the function itself to the macro. This will
+ *              trace the function's pointer into the trace buffer, which the
+ *              analyzer converts back into a funciton name using the map file.
+ *
+ * Example usage:
+ * void test_function(void)
+ * {
+ *     TRACE_FunctionEntry(test_function);
+ *     // ... Do stuff ...
+ *     TRACE_FunctionExit(test_function);
+ * }
+ *
+ * Note:
+ * It does not appear possible to get a pointer to the current function
+ * automatically.  Hence why it is necessary to provide the pointers manually.
+ * https://stackoverflow.com/questions/64261016/is-it-possible-to-unstringify-func-in-c
+ */
+#define TRACE_FunctionEntry(funcAddr)   TRACE_Put(              \
+    ((TRACE_IDCODE_FUNC_ENTRY & 0xF) << 28) |                   \
+    (((uint32_t)funcAddr - FLASH_BASE) & 0xFFFFFFF))
+#define TRACE_FunctionExit(funcAddr)    TRACE_Put(              \
+    ((TRACE_IDCODE_FUNC_EXIT & 0xF) << 28) |                    \
+    (((uint32_t)funcAddr - FLASH_BASE) & 0xFFFFFFF))
+
 #define TRACE_Line()
 #define TRACE_VariableValue()
 #define TRACE_SFRValue()
