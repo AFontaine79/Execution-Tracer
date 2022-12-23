@@ -92,3 +92,13 @@ void helper_VerifyVariableTrace(uint32_t * exp_addr, uint32_t exp_value)
     value = TRACE_Get();
     TEST_ASSERT_EQUAL_UINT32(exp_value, value);
 }
+
+void helper_VerifySFRTrace(uint32_t * exp_addr, uint32_t exp_value)
+{
+    uint32_t value = TRACE_Get();
+    exp_addr -= SFR_BASE;
+    TEST_ASSERT_EQUAL_UINT32(TRACE_IDCODE_SFR_VALUE, (uint8_t)((value & TRACE_IDCODE_Msk) >> TRACE_IDCODE_Pos));
+    TEST_ASSERT_EQUAL_UINT32((uint32_t)exp_addr, (value & TRACE_DATA_Msk) >> TRACE_DATA_Pos);
+    value = TRACE_Get();
+    TEST_ASSERT_EQUAL_UINT32(exp_value, value);
+}

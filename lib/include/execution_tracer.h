@@ -146,7 +146,16 @@
     ((((uint32_t)(&var) - RAM_BASE) << TRACE_DATA_Pos) & TRACE_DATA_Msk));      \
     TRACE_Put(var)
 
-#define TRACE_SFRValue()
+/**
+ * @brief       Trace a memory mapped peripheral register value
+ * Note:        This macro takes two entries in the buffer, one for the variables
+ *              address and one for its value.
+ * Note:        Analysis of SFR traces requires the SVD file for your MCU.
+ */
+#define TRACE_SFRValue(reg)     TRACE_Put(                                      \
+    ((TRACE_IDCODE_SFR_VALUE << TRACE_IDCODE_Pos) & TRACE_IDCODE_Msk) |         \
+    ((((uint32_t)(&reg) - RAM_BASE) << TRACE_DATA_Pos) & TRACE_DATA_Msk));      \
+    TRACE_Put(reg)
 
 
 typedef struct {

@@ -17,6 +17,7 @@
 #define RESET_TEST_VALUE        (FAKE_RCC_CSR_VALUE >> 24)      /* Reset flags use the top 8 bits of RCC->CSR */
 
 #define TEST_VALUE_A            0xAAAAAAAA
+#define TEST_VALUE_B            0xBBBBBBBB
 
 void tracedFunction(void)
 {
@@ -24,11 +25,11 @@ void tracedFunction(void)
     TRACE_FunctionExit(tracedFunction);
 }
 
-#define FIRST_TRACED_LINE       32
-#define SECOND_TRACED_LINE      33
+#define FIRST_TRACED_LINE       33
+#define SECOND_TRACED_LINE      34
 void tracedLines(void)
 {
-    _Static_assert(__LINE__ == 31, "Adjust FIRST_TRACED_LINE, SECOND_TRACED_LINE and this check");
+    _Static_assert(__LINE__ == 32, "Adjust FIRST_TRACED_LINE, SECOND_TRACED_LINE and this check");
     TRACE_Line(TRACE_MODULE);
     TRACE_Line(TRACE_MODULE);
 }
@@ -83,4 +84,16 @@ void test_TraceVariable(void)
 {
     TRACE_VariableValue(testVariable);
     helper_VerifyVariableTrace(&testVariable, testVariable);
+}
+
+/* SFRs don't exist when testing on the host, so there's not much that can be
+ * done here other than faking it out. TRACE_SFRValue works the same as
+ * TRACE_VariableValue, except with different ID code and memory offset.
+ */
+uint32_t someMemoryMappedPeripheralRegister = TEST_VALUE_B;
+void test_TraceSFR(void)
+{
+    TRACE_SFRValue(someMemoryMappedPeripheralRegister);
+    helper_VerifySFRTrace(&someMemoryMappedPeripheralRegister,
+            someMemoryMappedPeripheralRegister);
 }
