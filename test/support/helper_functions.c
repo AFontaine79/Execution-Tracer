@@ -62,23 +62,23 @@ void helper_EmptyQueue(void)
 void helper_VerifyExecTracerVersionTrace(void)
 {
     uint32_t value = TRACE_Get();
-    TEST_ASSERT_EQUAL_UINT8(TRACE_IDCODE_VERSION, (uint8_t)((value >> 28) & 0xF));
-    TEST_ASSERT_EQUAL_UINT8('V', (uint8_t)((value >> 16) & 0xFF));
-    TEST_ASSERT_EQUAL_UINT8(TRACE_PROTOCOL_MAJOR, (uint8_t)((value >> 8) & 0xFF));
-    TEST_ASSERT_EQUAL_UINT8(TRACE_PROTOCOL_MINOR, (uint8_t)(value & 0xFF));
+    TEST_ASSERT_EQUAL_UINT8(TRACE_IDCODE_VERSION, (uint8_t)((value & TRACE_IDCODE_Msk) >> TRACE_IDCODE_Pos));
+    TEST_ASSERT_EQUAL_UINT8(TRACE_VERSION_V_Val, (uint8_t)((value & TRACE_VERSION_V_Msk) >> TRACE_VERSION_V_Pos));
+    TEST_ASSERT_EQUAL_UINT8(TRACE_PROTOCOL_MAJOR, (uint8_t)((value & TRACE_VERSION_MAJOR_Msk) >> TRACE_VERSION_MAJOR_Pos));
+    TEST_ASSERT_EQUAL_UINT8(TRACE_PROTOCOL_MINOR, (uint8_t)((value & TRACE_VERSION_MINOR_Msk) >> TRACE_VERSION_MINOR_Pos));
 }
 
 void helper_VerifyProcessorResetTrace(uint32_t exp_value)
 {
     uint32_t value = TRACE_Get();
-    TEST_ASSERT_EQUAL_UINT8(TRACE_IDCODE_RESET, (uint8_t)((value >> 28) & 0xF));
-    TEST_ASSERT_EQUAL_UINT32(exp_value, (value & 0xFFFFFFF));
+    TEST_ASSERT_EQUAL_UINT8(TRACE_IDCODE_RESET, (uint8_t)((value & TRACE_IDCODE_Msk) >> TRACE_IDCODE_Pos));
+    TEST_ASSERT_EQUAL_UINT8(exp_value, (uint8_t)((value & TRACE_DATA_Msk) >> TRACE_DATA_Pos));
 }
 
 void helper_VerifyLineTrace(uint32_t module, uint32_t line_num)
 {
     uint32_t value = TRACE_Get();
-    TEST_ASSERT_EQUAL_UINT8(TRACE_IDCODE_FILE_AND_LINE, (uint8_t)((value >> 28) & 0xF));
-    TEST_ASSERT_EQUAL_UINT32(module, (value >> 16) & 0xFFF);
-    TEST_ASSERT_EQUAL_UINT32(line_num, value & 0xFFFF);
+    TEST_ASSERT_EQUAL_UINT8(TRACE_IDCODE_FILE_AND_LINE, (uint8_t)((value & TRACE_IDCODE_Msk) >> TRACE_IDCODE_Pos));
+    TEST_ASSERT_EQUAL_UINT8(module, (uint8_t)((value & TRACE_FANDL_MODULE_Msk) >> TRACE_FANDL_MODULE_Pos));
+    TEST_ASSERT_EQUAL_UINT8(line_num, (uint8_t)((value & TRACE_FANDL_FILE_Msk) >> TRACE_FANDL_FILE_Pos));
 }

@@ -28,5 +28,26 @@
 #define TRACE_IDCODE_VARIABLE_VALUE	    6
 #define TRACE_IDCODE_SFR_VALUE		    7
 
+/**
+ * These defines follow the style of SFR bitfield macros
+ * in ST CMSIS device headers.
+ */
+#define TRACE_IDCODE_Pos                (28U)
+#define TRACE_IDCODE_Msk                (0xFUL << TRACE_IDCODE_Pos)
+#define TRACE_DATA_Pos                  (0U)
+#define TRACE_DATA_Msk                  (0xFFFFFFF << TRACE_DATA_Pos)
+
+#define TRACE_VERSION_V_Pos             (16U)
+#define TRACE_VERSION_V_Msk             (0xFF << TRACE_VERSION_V_Pos)
+#define TRACE_VERSION_V_Val             ('V')
+#define TRACE_VERSION_MAJOR_Pos         (8U)
+#define TRACE_VERSION_MAJOR_Msk         (0xFF << TRACE_VERSION_MAJOR_Pos)
+#define TRACE_VERSION_MINOR_Pos         (0U)
+#define TRACE_VERSION_MINOR_Msk         (0xFF << TRACE_VERSION_MINOR_Pos)
+
+#define TRACE_FANDL_MODULE_Pos          (16U)
+#define TRACE_FANDL_MODULE_Msk          (0xFFF << TRACE_FANDL_MODULE_Pos)
+#define TRACE_FANDL_FILE_Pos            (0U)
+#define TRACE_FANDL_FILE_Msk            (0xFFFF << TRACE_FANDL_FILE_Pos)
 
 #endif /* LIB_INCLUDE_EXECUTION_TRACER_PROTOCOL_H_ */

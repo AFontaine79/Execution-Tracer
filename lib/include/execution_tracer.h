@@ -72,11 +72,11 @@
  * @brief       Traces the protocol version of the execution tracer
  *              Call this once during system startup.
  */
-#define TRACE_ExecTracerVersion()   TRACE_Put(                  \
-    ((TRACE_IDCODE_VERSION & 0xF) << 28) |                      \
-    (('V' & 0xFF) << 16) |                                      \
-    ((TRACE_PROTOCOL_MAJOR & 0xFF) << 8) |                      \
-    (TRACE_PROTOCOL_MINOR & 0xFF))
+#define TRACE_ExecTracerVersion()   TRACE_Put(                                      \
+    ((TRACE_IDCODE_VERSION << TRACE_IDCODE_Pos) & TRACE_IDCODE_Msk) |               \
+    ((TRACE_VERSION_V_Val << TRACE_VERSION_V_Pos) & TRACE_VERSION_V_Msk) |          \
+    ((TRACE_PROTOCOL_MAJOR << TRACE_VERSION_MAJOR_Pos) & TRACE_VERSION_MAJOR_Msk) | \
+    ((TRACE_PROTOCOL_MINOR << TRACE_VERSION_MINOR_Pos) & TRACE_VERSION_MINOR_Msk))
 
 /**
  * @brief       Traces information about the processor reset
@@ -86,9 +86,9 @@
  *              (E.g. RCC->CSR).  Shift and mask the register value to include
  *              only the relevant bits and avoid writing bits 31 through 28.
  */
-#define TRACE_ProcessorReset(reset_reg) TRACE_Put(              \
-    ((TRACE_IDCODE_RESET & 0xF) << 28) |                        \
-    (reset_reg & 0xFFFFFFF))
+#define TRACE_ProcessorReset(reset_reg) TRACE_Put(                      \
+    ((TRACE_IDCODE_RESET << TRACE_IDCODE_Pos) & TRACE_IDCODE_Msk) |     \
+    ((reset_reg << TRACE_DATA_Pos) & TRACE_DATA_Msk))
 
 /**
  * @brief       Trace function entry and exit
@@ -113,12 +113,12 @@
  * automatically.  Hence why it is necessary to provide the pointers manually.
  * https://stackoverflow.com/questions/64261016/is-it-possible-to-unstringify-func-in-c
  */
-#define TRACE_FunctionEntry(funcAddr)   TRACE_Put(              \
-    ((TRACE_IDCODE_FUNC_ENTRY & 0xF) << 28) |                   \
-    (((uint32_t)funcAddr - FLASH_BASE) & 0xFFFFFFF))
-#define TRACE_FunctionExit(funcAddr)    TRACE_Put(              \
-    ((TRACE_IDCODE_FUNC_EXIT & 0xF) << 28) |                    \
-    (((uint32_t)funcAddr - FLASH_BASE) & 0xFFFFFFF))
+#define TRACE_FunctionEntry(funcAddr)   TRACE_Put(                              \
+    ((TRACE_IDCODE_FUNC_ENTRY << TRACE_IDCODE_Pos) & TRACE_IDCODE_Msk) |        \
+    ((((uint32_t)funcAddr - FLASH_BASE) << TRACE_DATA_Pos) & TRACE_DATA_Msk))
+#define TRACE_FunctionExit(funcAddr)    TRACE_Put(                              \
+    ((TRACE_IDCODE_FUNC_EXIT << TRACE_IDCODE_Pos) & TRACE_IDCODE_Msk) |         \
+    ((((uint32_t)funcAddr - FLASH_BASE) << TRACE_DATA_Pos) & TRACE_DATA_Msk))
 
 /**
  * @brief       Trace file and line number
