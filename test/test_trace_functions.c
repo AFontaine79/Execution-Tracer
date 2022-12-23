@@ -16,17 +16,19 @@
 #define FAKE_RCC_CSR_VALUE      0x20000000                      /* IWDG reset on ST MCU */
 #define RESET_TEST_VALUE        (FAKE_RCC_CSR_VALUE >> 24)      /* Reset flags use the top 8 bits of RCC->CSR */
 
+#define TEST_VALUE_A            0xAAAAAAAA
+
 void tracedFunction(void)
 {
     TRACE_FunctionEntry(tracedFunction);
     TRACE_FunctionExit(tracedFunction);
 }
 
-#define FIRST_TRACED_LINE       30
-#define SECOND_TRACED_LINE      31
+#define FIRST_TRACED_LINE       32
+#define SECOND_TRACED_LINE      33
 void tracedLines(void)
 {
-    _Static_assert(__LINE__ == 29, "Adjust FIRST_TRACED_LINE, SECOND_TRACED_LINE and this check");
+    _Static_assert(__LINE__ == 31, "Adjust FIRST_TRACED_LINE, SECOND_TRACED_LINE and this check");
     TRACE_Line(TRACE_MODULE);
     TRACE_Line(TRACE_MODULE);
 }
@@ -74,4 +76,11 @@ void test_TraceLine(void)
     tracedLines();
     helper_VerifyLineTrace(TRACE_MODULE, FIRST_TRACED_LINE);
     helper_VerifyLineTrace(TRACE_MODULE, SECOND_TRACED_LINE);
+}
+
+uint32_t testVariable = TEST_VALUE_A;
+void test_TraceVariable(void)
+{
+    TRACE_VariableValue(testVariable);
+    helper_VerifyVariableTrace(&testVariable, testVariable);
 }

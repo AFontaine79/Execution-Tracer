@@ -47,7 +47,7 @@
 
 #define TRACE_FANDL_MODULE_Pos          (16U)
 #define TRACE_FANDL_MODULE_Msk          (0xFFF << TRACE_FANDL_MODULE_Pos)
-#define TRACE_FANDL_FILE_Pos            (0U)
-#define TRACE_FANDL_FILE_Msk            (0xFFFF << TRACE_FANDL_FILE_Pos)
+#define TRACE_FANDL_LINE_Pos            (0U)
+#define TRACE_FANDL_LINE_Msk            (0xFFFF << TRACE_FANDL_LINE_Pos)
 
 #endif /* LIB_INCLUDE_EXECUTION_TRACER_PROTOCOL_H_ */

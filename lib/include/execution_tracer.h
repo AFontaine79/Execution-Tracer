@@ -127,12 +127,25 @@
  * param[in]    module - An integer identifier used to identify the file when
  *              analyzing the trace buffer.
  */
-#define TRACE_Line(module)  TRACE_Put(                          \
-    ((TRACE_IDCODE_FILE_AND_LINE & 0xF) << 28) |                \
-    ((module & 0xFFF) << 16) |                                  \
-    (__LINE__ & 0xFFFF))
+#define TRACE_Line(module)  TRACE_Put(                                          \
+    ((TRACE_IDCODE_FILE_AND_LINE << TRACE_IDCODE_Pos) & TRACE_IDCODE_Msk) |     \
+    ((module << TRACE_FANDL_MODULE_Pos) & TRACE_FANDL_MODULE_Msk) |             \
+    ((__LINE__ << TRACE_FANDL_LINE_Pos) & TRACE_FANDL_LINE_Msk))
 
-#define TRACE_VariableValue()
+/**
+ * @brief       Trace a variable value
+ * Note:        This macro takes two entries in the buffer, one for the variables
+ *              address and one for its value.
+ * Note:        A variable must be global and non-static for it to appear in a
+ *              gcc map file. Without this, the analyzer cannot name a variable
+ *              explicitly when decoding the buffer. Instead, it will say
+ *              Stack + N, Heap + N or similar or UNKNOWN.
+ */
+#define TRACE_VariableValue(var)    TRACE_Put(                                  \
+    ((TRACE_IDCODE_VARIABLE_VALUE << TRACE_IDCODE_Pos) & TRACE_IDCODE_Msk) |    \
+    ((((uint32_t)(&var) - RAM_BASE) << TRACE_DATA_Pos) & TRACE_DATA_Msk));      \
+    TRACE_Put(var)
+
 #define TRACE_SFRValue()
 
 
