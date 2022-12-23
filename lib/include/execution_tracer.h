@@ -115,10 +115,10 @@
  */
 #define TRACE_FunctionEntry(funcAddr)   TRACE_Put(                              \
     ((TRACE_IDCODE_FUNC_ENTRY << TRACE_IDCODE_Pos) & TRACE_IDCODE_Msk) |        \
-    ((((uint32_t)funcAddr - FLASH_BASE) << TRACE_DATA_Pos) & TRACE_DATA_Msk))
+    ((((uintptr_t)funcAddr - FLASH_BASE) << TRACE_DATA_Pos) & TRACE_DATA_Msk))
 #define TRACE_FunctionExit(funcAddr)    TRACE_Put(                              \
     ((TRACE_IDCODE_FUNC_EXIT << TRACE_IDCODE_Pos) & TRACE_IDCODE_Msk) |         \
-    ((((uint32_t)funcAddr - FLASH_BASE) << TRACE_DATA_Pos) & TRACE_DATA_Msk))
+    ((((uintptr_t)funcAddr - FLASH_BASE) << TRACE_DATA_Pos) & TRACE_DATA_Msk))
 
 /**
  * @brief       Trace file and line number
@@ -143,7 +143,7 @@
  */
 #define TRACE_VariableValue(var)    TRACE_Put(                                  \
     ((TRACE_IDCODE_VARIABLE_VALUE << TRACE_IDCODE_Pos) & TRACE_IDCODE_Msk) |    \
-    ((((uint32_t)(&var) - RAM_BASE) << TRACE_DATA_Pos) & TRACE_DATA_Msk));      \
+    ((((uintptr_t)(&var) - RAM_BASE) << TRACE_DATA_Pos) & TRACE_DATA_Msk));     \
     TRACE_Put(var)
 
 /**
@@ -154,7 +154,7 @@
  */
 #define TRACE_SFRValue(reg)     TRACE_Put(                                      \
     ((TRACE_IDCODE_SFR_VALUE << TRACE_IDCODE_Pos) & TRACE_IDCODE_Msk) |         \
-    ((((uint32_t)(&reg) - RAM_BASE) << TRACE_DATA_Pos) & TRACE_DATA_Msk));      \
+    ((((uintptr_t)(&reg) - RAM_BASE) << TRACE_DATA_Pos) & TRACE_DATA_Msk));     \
     TRACE_Put(reg)
 
 

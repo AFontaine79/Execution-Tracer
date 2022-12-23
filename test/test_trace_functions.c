@@ -61,13 +61,18 @@ void test_TraceFunctionEntryAndExit(void)
     uint32_t entryValue;
     uint32_t exitValue;
 
+    /* If the host OS pointer value is larger than TRACE_DATA_Msk, we can't do anything about that.
+     * Instead, we just ensure that the truncated value matches. On a target system, pointer values
+     * will not be truncated. */
     tracedFunction();
     entryValue = TRACE_Get();
     TEST_ASSERT_EQUAL_UINT8(TRACE_IDCODE_FUNC_ENTRY, (uint8_t)((entryValue >> 28) & 0xF));
     exitValue = TRACE_Get();
     TEST_ASSERT_EQUAL_UINT8(TRACE_IDCODE_FUNC_EXIT, (uint8_t)((exitValue >> 28) & 0xF));
-    entryValue &= 0xFFFFFFF;
-    exitValue &= 0xFFFFFFF;
+    entryValue >>= TRACE_DATA_Pos;
+    entryValue &= TRACE_DATA_Msk;
+    exitValue >>= TRACE_DATA_Pos;
+    exitValue &= TRACE_DATA_Msk;
     TEST_ASSERT_EQUAL(entryValue, exitValue);
     printf("Verify in the map file that tracedFunction() is at 0x%08X", (entryValue + FLASH_BASE));
 }

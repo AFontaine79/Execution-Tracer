@@ -85,20 +85,26 @@ void helper_VerifyLineTrace(uint32_t module, uint32_t line_num)
 
 void helper_VerifyVariableTrace(uint32_t * exp_addr, uint32_t exp_value)
 {
+    /* If the host OS pointer value is larger than TRACE_DATA_Msk, we can't do anything about that.
+     * Instead, we just ensure that the truncated value matches. On a target system, pointer values
+     * will not be truncated. */
     uint32_t value = TRACE_Get();
     exp_addr -= RAM_BASE;
     TEST_ASSERT_EQUAL_UINT32(TRACE_IDCODE_VARIABLE_VALUE, (uint8_t)((value & TRACE_IDCODE_Msk) >> TRACE_IDCODE_Pos));
-    TEST_ASSERT_EQUAL_UINT32((uint32_t)exp_addr, (value & TRACE_DATA_Msk) >> TRACE_DATA_Pos);
+    TEST_ASSERT_EQUAL_UINT32((uintptr_t)exp_addr & TRACE_DATA_Msk, (value & TRACE_DATA_Msk) >> TRACE_DATA_Pos);
     value = TRACE_Get();
     TEST_ASSERT_EQUAL_UINT32(exp_value, value);
 }
 
 void helper_VerifySFRTrace(uint32_t * exp_addr, uint32_t exp_value)
 {
+    /* If the host OS pointer value is larger than TRACE_DATA_Msk, we can't do anything about that.
+     * Instead, we just ensure that the truncated value matches. On a target system, pointer values
+     * will not be truncated. */
     uint32_t value = TRACE_Get();
     exp_addr -= SFR_BASE;
     TEST_ASSERT_EQUAL_UINT32(TRACE_IDCODE_SFR_VALUE, (uint8_t)((value & TRACE_IDCODE_Msk) >> TRACE_IDCODE_Pos));
-    TEST_ASSERT_EQUAL_UINT32((uint32_t)exp_addr, (value & TRACE_DATA_Msk) >> TRACE_DATA_Pos);
+    TEST_ASSERT_EQUAL_UINT32((uintptr_t)exp_addr & TRACE_DATA_Msk, (value & TRACE_DATA_Msk) >> TRACE_DATA_Pos);
     value = TRACE_Get();
     TEST_ASSERT_EQUAL_UINT32(exp_value, value);
 }
