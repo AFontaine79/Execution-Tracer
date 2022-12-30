@@ -58,13 +58,13 @@ def read_gnu_map_file(file_name):
                     # static variables is to not declare them static for debug builds
                     # where you want them traced.
                     if linker_section == LinkerSection.TEXT:
-                        match_results = re.match('^ {16}0x([0-9A-Fa-f]{8}) {16}(\S+)', line)
+                        match_results = re.match('^ {16}0x([0-9A-Fa-f]+) {16}(\S+)', line)
                         if match_results:
                             # Function name and address found
                             address = int(match_results.groups()[0], 16)
                             functions[address] = match_results.groups()[1]
                     elif linker_section == LinkerSection.DATA or linker_section == LinkerSection.BSS:
-                        match_results = re.match('^ {16}0x([0-9A-Fa-f]{8}) {16}(\S+)', line)
+                        match_results = re.match('^ {16}0x([0-9A-Fa-f]+) {16}(\S+)', line)
                         if match_results:
                             # Variable name and address found
                             address = int(match_results.groups()[0], 16)
