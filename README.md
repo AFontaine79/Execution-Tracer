@@ -1,5 +1,7 @@
 # Execution Tracer
 
+> **Note:** You are in the `add-python-script` branch. The Python scripts are not being actively developed here.  They are being worked on in the `test-execution-tracer` branch of my [fork](https://github.com/AFontaine79/LoRaMac-node) of the LoRaMac-node project.  TRACE macros have been added to `src/apps/ping-pong/NucleoL476/main.c`.  I am building using Semtech's CMake scripts and testing on a NucleoL476 with SX1276MB1LAS shield.  When the Python scripts are ready for initial release, they will be copied back to this project.
+
 ## Overview
 
 Execution Tracer is a simple, minimalist, low overhead and open-source tool to help you understand the sequencing of your programs.  It is designed to be usable on any system with a minimum amount of effort and without any extra hardware.  It gives you real trace data on exactly what events occurred and in what order.  It can provide this information in real time or after the fact (e.g. from a log capture triggered by a fault).
