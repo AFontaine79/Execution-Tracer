@@ -129,7 +129,7 @@
  */
 #define TRACE_Line(module)  TRACE_Put(                                          \
     ((TRACE_IDCODE_FILE_AND_LINE << TRACE_IDCODE_Pos) & TRACE_IDCODE_Msk) |     \
-    ((module << TRACE_FANDL_MODULE_Pos) & TRACE_FANDL_MODULE_Msk) |             \
+    ((TRACE_MODULE << TRACE_FANDL_MODULE_Pos) & TRACE_FANDL_MODULE_Msk) |       \
     ((__LINE__ << TRACE_FANDL_LINE_Pos) & TRACE_FANDL_LINE_Msk))
 
 /**
