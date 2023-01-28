@@ -1,9 +1,21 @@
+class TraceReaderInterface:
+    def read_next(self) -> int:
+        """Return the next value from the trace buffer.
+
+        The value must be returned as an integer regardless
+        of its intermediate format. This function may block
+        if waiting for new values.
+        """
+        pass
 
 class ExecTraceParser:
     def __init__(self, functions, variables, registers):
         self.functions = functions
         self.variables = variables
         self.registers = registers
+        self.FLASH_BASE = 0
+        self.RAM_BASE = 0
+        self.SFR_BASE = 0
         self.indent_level = 0
 
     def set_flash_base(self, flash_base):
@@ -90,11 +102,8 @@ class ExecTraceParser:
         self.print_indent()
         print("%s = 0x%08X" % (self.get_sfr_name(addr_value), reg_value))
 
-    # read_func must return the next trace value as an integer every time
-    # it is called. If no value is ready yet, it should block. If all values
-    # have been read, it should return -1.
-    def read_and_trace_next(self, read_func):
-        value = read_func()
+    def read_and_trace_next(self, trace_reader: TraceReaderInterface):
+        value = trace_reader.read_next()
 
         if value == -1:
             return
@@ -111,8 +120,8 @@ class ExecTraceParser:
         elif idcode == 5:
             self.trace_file_and_line(value)
         elif idcode == 6:
-            value2 = read_func()
+            value2 = trace_reader.read_next()
             self.trace_variable(value, value2)
         elif idcode == 7:
-            value2 = read_func()
+            value2 = trace_reader.read_next()
             self.trace_sfr(value, value2)

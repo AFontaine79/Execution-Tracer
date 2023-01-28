@@ -1,7 +1,7 @@
 
 from parse_map_file import read_gnu_map_file
 from parse_svd import get_mcu_register_set
-from exec_trace_parser import ExecTraceParser
+from exec_trace_parser import ExecTraceParser, TraceReaderInterface
 
 import argparse
 import serial
@@ -11,19 +11,23 @@ FLASH_BASE = 0x08000000
 RAM_BASE   = 0x20000000
 SFR_BASE   = 0x40000000
 
-def ser_read_func():
-    line = ser.read_until()
-    line = line.decode(encoding='utf-8')
-    value = int(line, 0)
-    return value
+class SerialPortTraceReader(TraceReaderInterface):
+    def __init__(self, serial_port: serial.Serial):
+        self.ser = serial_port
 
-def live_trace(ser, functions, variables, registers):
+    def read_next(self) -> int:
+        line = self.ser.read_until()
+        line = line.decode(encoding='utf-8')
+        value = int(line, 0)
+        return value
+
+def live_trace(reader, functions, variables, registers):
     tracer = ExecTraceParser(functions, variables, registers)
     tracer.set_flash_base(FLASH_BASE)
     tracer.set_ram_base(RAM_BASE)
     tracer.set_sfr_base(SFR_BASE)
     while(True):
-        tracer.read_and_trace_next(ser_read_func)
+        tracer.read_and_trace_next(reader)
 
 def main():
     global ser
@@ -37,7 +41,7 @@ def main():
     args = parser.parse_args()
 
     map_file = args.map_file
-    ser_port = args.serial
+    ser_port_name = args.serial
     svd_file = args.svd_file
     make = args.make
     model = args.model
@@ -61,9 +65,9 @@ def main():
     else:
         print("WARNING: No peripheral registers found")
 
-    ser = serial.Serial(port=ser_port, baudrate=921600, rtscts=False)
+    reader = SerialPortTraceReader(serial.Serial(port=ser_port_name, baudrate=921600, rtscts=False))
 
-    live_trace(ser, functions, variables, registers)
+    live_trace(reader, functions, variables, registers)
 
 class InputError(RuntimeError):
     def __init__(self, e):
