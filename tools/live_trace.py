@@ -11,17 +11,22 @@ FLASH_BASE = 0x08000000
 RAM_BASE   = 0x20000000
 SFR_BASE   = 0x40000000
 
+def ser_read_func():
+    line = ser.read_until()
+    line = line.decode(encoding='utf-8')
+    value = int(line, 0)
+    return value
+
 def live_trace(ser, functions, variables, registers):
     tracer = ExecTraceParser(functions, variables, registers)
     tracer.set_flash_base(FLASH_BASE)
     tracer.set_ram_base(RAM_BASE)
     tracer.set_sfr_base(SFR_BASE)
     while(True):
-        tracer.read_and_trace_next(ser.read_until)
+        tracer.read_and_trace_next(ser_read_func)
 
 def main():
-    global map_file
-    global ser_port
+    global ser
 
     parser = argparse.ArgumentParser(description='GNU Map file parser')
     parser.add_argument('--map_file', '-m', help='GNU Map file', type=str, required=True)

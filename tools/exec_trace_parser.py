@@ -90,34 +90,29 @@ class ExecTraceParser:
         self.print_indent()
         print("%s = 0x%08X" % (self.get_sfr_name(addr_value), reg_value))
 
-    # TODO: Modify this function and its API to allow data from read func in different formats.
-    #   - String values representing numeric values in hex or dec format.
-    #   - Bytes values representing raw trace buffer values.
+    # read_func must return the next trace value as an integer every time
+    # it is called. If no value is ready yet, it should block. If all values
+    # have been read, it should return -1.
     def read_and_trace_next(self, read_func):
-        line = read_func()
-        line = line.decode(encoding='utf-8')
-        if line.startswith('0x'):
-            value = int(line, 0)
-            idcode = (value >> 28) & 0xF
-            if idcode == 1:
-                self.trace_version(value)
-            elif idcode == 2:
-                self.trace_reset(value)
-            elif idcode == 3:
-                self.trace_func_entry(value)
-            elif idcode == 4:
-                self.trace_func_exit(value)
-            elif idcode == 5:
-                self.trace_file_and_line(value)
-            elif idcode == 6:
-                line2 = read_func()
-                line2 = line2.decode(encoding='utf-8')
-                value2 = int(line2, 0)
-                self.trace_variable(value, value2)
-            elif idcode == 7:
-                line2 = read_func()
-                line2 = line2.decode(encoding='utf-8')
-                value2 = int(line2, 0)
-                self.trace_sfr(value, value2)
-        else:
-            print(line)
+        value = read_func()
+
+        if value == -1:
+            return
+
+        idcode = (value >> 28) & 0xF
+        if idcode == 1:
+            self.trace_version(value)
+        elif idcode == 2:
+            self.trace_reset(value)
+        elif idcode == 3:
+            self.trace_func_entry(value)
+        elif idcode == 4:
+            self.trace_func_exit(value)
+        elif idcode == 5:
+            self.trace_file_and_line(value)
+        elif idcode == 6:
+            value2 = read_func()
+            self.trace_variable(value, value2)
+        elif idcode == 7:
+            value2 = read_func()
+            self.trace_sfr(value, value2)
