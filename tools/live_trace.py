@@ -16,35 +16,8 @@ def live_trace(ser, functions, variables, registers):
     tracer.set_flash_base(FLASH_BASE)
     tracer.set_ram_base(RAM_BASE)
     tracer.set_sfr_base(SFR_BASE)
-
     while(True):
-        line = ser.read_until()
-        line = line.decode(encoding='utf-8')
-        if line.startswith('0x'):
-            value = int(line, 0)
-            idcode = (value >> 28) & 0xF
-            if idcode == 1:
-                tracer.trace_version(value)
-            elif idcode == 2:
-                tracer.trace_reset(value)
-            elif idcode == 3:
-                tracer.trace_func_entry(value)
-            elif idcode == 4:
-                tracer.trace_func_exit(value)
-            elif idcode == 5:
-                tracer.trace_file_and_line(value)
-            elif idcode == 6:
-                line2 = ser.read_until()
-                line2 = line2.decode(encoding='utf-8')
-                value2 = int(line2, 0)
-                tracer.trace_variable(value, value2)
-            elif idcode == 7:
-                line2 = ser.read_until()
-                line2 = line2.decode(encoding='utf-8')
-                value2 = int(line2, 0)
-                tracer.trace_sfr(value, value2)
-        else:
-            print(line)
+        tracer.read_and_trace_next(ser.read_until)
 
 def main():
     global map_file
