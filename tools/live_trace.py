@@ -1,5 +1,7 @@
 
 from parse_map_file import read_gnu_map_file
+from parse_svd import get_mcu_register_set
+
 import argparse
 import serial
 import sys
@@ -33,7 +35,15 @@ def get_func_name(value, functions):
     if func_addr in functions.keys():
         return functions[func_addr]
     else:
-        return "Unknown func"
+        return "Function @ 0x%08X" % func_addr
+
+def get_sfr_name(value, registers):
+    sfr_addr = (value & 0xFFFFFFE) + SFR_BASE
+    if sfr_addr in registers.keys():
+        peripheral_register = registers[sfr_addr]
+        return "%s->%s" % (peripheral_register.peripheral_name, peripheral_register.register_name)
+    else:
+        return "SFR @ 0x%08X" % sfr_addr
 
 def trace_version(value):
     ver_char = (value >> 16) & 0xFF
@@ -66,10 +76,11 @@ def trace_file_and_line(value):
 def trace_variable(value):
     pass
 
-def trace_sfr(value):
-    pass
+def trace_sfr(addr_value, reg_value, registers):
+    print_indent()
+    print("%s = 0x%08X" % (get_sfr_name(addr_value, registers), reg_value))
 
-def live_trace(ser, functions, variables):
+def live_trace(ser, functions, variables, registers):
     while(True):
         line = ser.read_until()
         line = line.decode(encoding='utf-8')
@@ -89,7 +100,10 @@ def live_trace(ser, functions, variables):
             elif idcode == 6:
                 pass
             elif idcode == 7:
-                pass
+                line2 = ser.read_until()
+                line2 = line2.decode(encoding='utf-8')
+                value2 = int(line2, 0)
+                trace_sfr(value, value2, registers)
         else:
             print(line)
 
@@ -98,28 +112,41 @@ def main():
     global ser_port
 
     parser = argparse.ArgumentParser(description='GNU Map file parser')
-    parser.add_argument('--file', '-f', help='GNU Map file', type=str, required=True)
-    parser.add_argument('--port', '-p', help='Serial port', type=str, required=True)
+    parser.add_argument('--map_file', '-m', help='GNU Map file', type=str, required=True)
+    parser.add_argument('--serial', '-s', help='Serial device', type=str, required=True)
+    parser.add_argument('--svd_file', help='SVD file in XML foramt', type=str, required=False)
+    parser.add_argument('--make', help='Vendor (e.g. Atmel or STMicro)', type=str, required=False)
+    parser.add_argument('--model', help='Device name (e.g. ATSAMA5D33 or STM32L4x6)', type=str, required=False)
     args = parser.parse_args()
 
-    map_file = args.file
-    ser_port = args.port
+    map_file = args.map_file
+    ser_port = args.serial
+    svd_file = args.svd_file
+    make = args.make
+    model = args.model
 
     functions, variables = read_gnu_map_file(map_file)
     if functions:
         # Can trace functions found here
         pass
     else:
-        print("No functions found in %s" % map_file)
+        print("WARNING: No functions found in %s" % map_file)
     if variables:
         # Can trace variables found here
         pass
     else:
-        print("No variables found in %s" % map_file)
+        print("WARNING: No variables found in %s" % map_file)
+    
+    registers = get_mcu_register_set(svd_file, make, model)
+    if registers:
+        # Can trace registers found here
+        pass
+    else:
+        print("WARNING: No peripheral registers found")
 
     ser = serial.Serial(port=ser_port, baudrate=921600, rtscts=False)
 
-    live_trace(ser, functions, variables)
+    live_trace(ser, functions, variables, registers)
 
 class InputError(RuntimeError):
     def __init__(self, e):

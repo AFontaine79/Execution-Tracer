@@ -1,4 +1,5 @@
 
+import argparse
 import os
 import re
 import sys
@@ -70,3 +71,33 @@ def read_gnu_map_file(file_name):
                             variables[address] = match_results.groups()[1]
     
     return (functions, variables)
+
+def main():
+    global map_file
+
+    parser = argparse.ArgumentParser(description='GNU Map file parser')
+    parser.add_argument('--file', '-f', help='GNU Map file', type=str, required=True)
+    args = parser.parse_args()
+
+    map_file = args.file
+
+    functions, variables = read_gnu_map_file(map_file)
+    if functions:
+        print("Functions:")
+        for key in functions.keys():
+            print("  0x%08X: %s" % (key, functions[key]))
+    if variables:
+        print("Variables")
+        for key in variables.keys():
+            print("  0x%08X: %s" % (key, variables[key]))
+
+class InputError(RuntimeError):
+    def __init__(self, e):
+        super(InputError, self).__init__(e)
+
+if __name__ == '__main__':
+    try:
+        main()
+    except InputError as e:
+        print(e, file=sys.stderr)
+        sys.exit(2)
