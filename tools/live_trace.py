@@ -37,6 +37,13 @@ def get_func_name(value, functions):
     else:
         return "Function @ 0x%08X" % func_addr
 
+def get_var_name(value, variables):
+    var_addr = (value & 0xFFFFFFE) + RAM_BASE
+    if var_addr in variables.keys():
+        return variables[var_addr]
+    else:
+        return "Variable @ 0x%08X" % var_addr
+
 def get_sfr_name(value, registers):
     sfr_addr = (value & 0xFFFFFFE) + SFR_BASE
     if sfr_addr in registers.keys():
@@ -71,10 +78,14 @@ def trace_func_exit(value, functions):
     print("Exit %s" % get_func_name(value, functions))
 
 def trace_file_and_line(value):
-    pass
+    module_num = (value >> 16) & 0xFFF
+    line_num = (value >> 0) & 0xFFFF
+    print_indent()
+    print("Module: %u, Line: %u" % (module_num, line_num))
 
-def trace_variable(value):
-    pass
+def trace_variable(addr_value, var_value, variables):
+    print_indent()
+    print("%s = %d" % (get_var_name(addr_value, variables), var_value))
 
 def trace_sfr(addr_value, reg_value, registers):
     print_indent()
@@ -96,9 +107,12 @@ def live_trace(ser, functions, variables, registers):
             elif idcode == 4:
                 trace_func_exit(value, functions)
             elif idcode == 5:
-                pass
+                trace_file_and_line(value)
             elif idcode == 6:
-                pass
+                line2 = ser.read_until()
+                line2 = line2.decode(encoding='utf-8')
+                value2 = int(line2, 0)
+                trace_variable(value, value2, variables)
             elif idcode == 7:
                 line2 = ser.read_until()
                 line2 = line2.decode(encoding='utf-8')
