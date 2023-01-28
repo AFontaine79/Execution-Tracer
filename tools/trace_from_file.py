@@ -4,21 +4,24 @@ from parse_svd import get_mcu_register_set
 from exec_trace_parser import ExecTraceParser, TraceReaderInterface
 
 import argparse
-import serial
+import io
 import sys
 
 FLASH_BASE = 0x08000000
 RAM_BASE   = 0x20000000
 SFR_BASE   = 0x40000000
 
-class SerialPortTraceReader(TraceReaderInterface):
-    def __init__(self, serial_port: serial.Serial):
-        self.ser = serial_port
+# TODO: Figure out how we can properly iterate the text file
+class TextFileTraceReader(TraceReaderInterface):
+    def __init__(self, log_file: io.StringIO):
+        self.log_file = log_file
 
     def read_next(self) -> int:
-        line = self.ser.read_until()
-        line = line.decode(encoding='utf-8')
-        value = int(line, 0)
+        line = self.log_file.readline()
+        if len(line) > 0:
+            value = int(line, 0)
+        else:
+            value = -1
         return value
 
 def live_trace(reader, functions, variables, registers):
@@ -33,14 +36,14 @@ def main():
 
     parser = argparse.ArgumentParser(description='GNU Map file parser')
     parser.add_argument('--map_file', '-m', help='GNU Map file', type=str, required=True)
-    parser.add_argument('--serial', '-s', help='Serial device', type=str, required=True)
+    parser.add_argument('--file', '-f', help='Log file', type=str, required=True)
     parser.add_argument('--svd_file', help='SVD file in XML foramt', type=str, required=False)
     parser.add_argument('--make', help='Vendor (e.g. Atmel or STMicro)', type=str, required=False)
     parser.add_argument('--model', help='Device name (e.g. ATSAMA5D33 or STM32L4x6)', type=str, required=False)
     args = parser.parse_args()
 
     map_file = args.map_file
-    ser_port_name = args.serial
+    log_file_name = args.file
     svd_file = args.svd_file
     make = args.make
     model = args.model
@@ -64,9 +67,9 @@ def main():
     else:
         print("WARNING: No peripheral registers found")
 
-    reader = SerialPortTraceReader(serial.Serial(port=ser_port_name, baudrate=921600, rtscts=False))
-
-    live_trace(reader, functions, variables, registers)
+    with open(log_file_name) as log_file:
+        reader = TextFileTraceReader(log_file)
+        live_trace(reader, functions, variables, registers)
 
 class InputError(RuntimeError):
     def __init__(self, e):

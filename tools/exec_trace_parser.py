@@ -106,7 +106,7 @@ class ExecTraceParser:
         value = trace_reader.read_next()
 
         if value == -1:
-            return
+            return False
 
         idcode = (value >> 28) & 0xF
         if idcode == 1:
@@ -125,3 +125,9 @@ class ExecTraceParser:
         elif idcode == 7:
             value2 = trace_reader.read_next()
             self.trace_sfr(value, value2)
+
+        return True
+
+    def read_and_trace_all(self, trace_reader: TraceReaderInterface):
+        while(self.read_and_trace_next(trace_reader)):
+            pass
