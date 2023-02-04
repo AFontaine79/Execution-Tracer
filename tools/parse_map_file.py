@@ -6,18 +6,40 @@ import sys
 from enum import Enum
 
 class LinkerSection(Enum):
+    """Enum to identify the section of the map file currently being parsed."""
     UNKNOWN = 1
     TEXT = 2
     DATA = 3
     BSS = 4
 
 linker_section_ids = {
+    """Dictionary to map map-file section name to enum identifier."""
     ".text": LinkerSection.TEXT,
     ".data": LinkerSection.DATA,
     ".bss": LinkerSection.BSS
 }
 
 def read_gnu_map_file(file_name):
+    """Read in a GNU map file and return dictionaries that map memory addresses
+    to function names and variable names.
+    
+    The code should be compiled with -ffunction-sections and -fdata-sections so
+    that all function names, including static functions, appear in the map
+    file.
+    This will still not be able to see statically declared variables. For
+    execution tracing of static variables, the suggestion is to make them not
+    static for a debug build, or to use a macro that can selectively enable
+    or disable the static keyword.
+    
+    Args:
+      file-name - Absolute or relative path to the GNU map file for the program
+                  being traced.
+    
+    Returns:
+      The tuple (functions, variables)
+      functions - A dictionary that maps MCU memory addresses to function names.
+      variables - A dictionary that maps MCU memory addresses to variable names.
+    """
     if not os.path.isfile(file_name):
         print(f"File '{file_name}' not found")
         return (None, None)
@@ -73,6 +95,14 @@ def read_gnu_map_file(file_name):
     return (functions, variables)
 
 def main():
+    """Test retrieval of functions and variables dictionaries.
+    
+    This module is not meant to be used directly when analyzing execution trace
+    logs. Direct use is for dumping the functions and variables dictionaries
+    directly to stdout. This is useful for generating a summary of function
+    and variable names or for understanding why a register may not be tracing
+    correctly.
+    """
     global map_file
 
     parser = argparse.ArgumentParser(description='GNU Map file parser')
@@ -92,10 +122,12 @@ def main():
             print("  0x%08X: %s" % (key, variables[key]))
 
 class InputError(RuntimeError):
+    """Boilerplate code for using this file directly from the command line."""
     def __init__(self, e):
         super(InputError, self).__init__(e)
 
 if __name__ == '__main__':
+    """Boilerplate code for using this file directly from the command line."""
     try:
         main()
     except InputError as e:
