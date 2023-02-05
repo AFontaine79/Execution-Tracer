@@ -28,17 +28,17 @@ SFR_BASE   = 0x40000000
 
 class TextFileTraceReader(TraceReaderInterface):
     """Read trace buffer values saved to a log file in text format.
-    
+
     Each value must be in one of the following two formats and terminated with
     a new line character.
       hex format: 0xXXXXXXXX
       decimal format: XXXXXXXXX
-    
+
     The log file must not contain anything other than trace buffer data.
     """
     def __init__(self, log_file: io.StringIO):
         """Initializes the log file trace reader.
-        
+
         Args:
           log_file: A text stream reader object returned by open().
         """
@@ -46,7 +46,7 @@ class TextFileTraceReader(TraceReaderInterface):
 
     def read_next(self) -> int:
         """Read the next value from the log file and return it as an integer.
-        
+
         Returns:
           The next value from the log file or
           TraceReaderInterface.END_OF_TRACE_BUFFER if there are no more values.
@@ -60,7 +60,7 @@ class TextFileTraceReader(TraceReaderInterface):
 
 def live_trace(reader, functions, variables, registers):
     """Parse all values from the log file and output to stdout.
-    
+
     Iterates over the entire log file, translating all trace values to human
     readable format and outputting the results to stdout.
 
@@ -73,7 +73,7 @@ def live_trace(reader, functions, variables, registers):
       variables: Dictionary that maps MCU addresses to variable names.
       registers: Dictionary that maps MCU addresses to
                  parse_svd.PeripheralRegister objects.
-  
+
     """
     tracer = ExecTraceParser(functions, variables, registers)
     tracer.set_flash_base(FLASH_BASE)
@@ -84,7 +84,7 @@ def live_trace(reader, functions, variables, registers):
 def main():
     """Parse a log file saved from a back-end terminal and output the results
     to stdout.
-    
+
     See module comment for usage.
     """
     global ser
@@ -114,7 +114,7 @@ def main():
         pass
     else:
         print("WARNING: No variables found in %s" % map_file)
-    
+
     registers = get_mcu_register_set(svd_file, make, model)
     if registers:
         # Can trace registers found here

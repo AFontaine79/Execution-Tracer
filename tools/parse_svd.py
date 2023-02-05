@@ -18,7 +18,7 @@ def get_mcu_register_set_for_device(device):
       device: is a cmsis_svd.model.SVDDevice object returned by SVDParser.
 
     Returns:
-      A dictionary that maps MCU memory addresses to PeripheralRegister objects. 
+      A dictionary that maps MCU memory addresses to PeripheralRegister objects.
     """
     registers = {}
     for peripheral in device.peripherals:
@@ -50,7 +50,7 @@ def get_mcu_register_set_for_packaged_svd(make, model):
       model: The name of the device (e.g. "STM32L4x6").
 
     Returns:
-      A dictionary that maps MCU memory addresses to PeripheralRegister objects. 
+      A dictionary that maps MCU memory addresses to PeripheralRegister objects.
     """
     try:
         parser = SVDParser.for_packaged_svd(make, model + '.svd')
@@ -62,12 +62,12 @@ def get_mcu_register_set_for_packaged_svd(make, model):
 
 def get_mcu_register_set_from_xml_file(file_name):
     """Return a PeripheralRegisters dictionary for a user-provided SVD file.
-    
+
     Args:
       file_name: The relative or absolute path to the SVD file.
 
     Returns:
-      A dictionary that maps MCU memory addresses to PeripheralRegister objects. 
+      A dictionary that maps MCU memory addresses to PeripheralRegister objects.
     """
     if not os.path.isfile(file_name):
         print(f"File '{file_name}' not found")
@@ -83,7 +83,7 @@ def get_mcu_register_set_from_xml_file(file_name):
 
 def get_mcu_register_set(svd_file = None, make = None, model = None):
     """Return a PeripheralRegisters dictionary.
-    
+
     This function is a convenience wrapper that can both:
     - Verify a correct combination of CLI arguments
     - Forward to the correct lower-level function based on those arguments.
@@ -97,7 +97,7 @@ def get_mcu_register_set(svd_file = None, make = None, model = None):
       file_name: The relative or absolute path to the SVD file.
 
     Returns:
-      A dictionary that maps MCU memory addresses to PeripheralRegister objects. 
+      A dictionary that maps MCU memory addresses to PeripheralRegister objects.
     """
     if not make and not model and not svd_file:
         print("WARNING: No arguments for SVD selection.")
@@ -117,7 +117,7 @@ def get_mcu_register_set(svd_file = None, make = None, model = None):
 
 def main():
     """Test retrieval of a PeripheralRegisters dictionary.
-    
+
     This module is not meant to be used directly when analyzing execution trace
     logs. Direct use is for dumping the PeripheralRegisters dictionary directly
     to stdout. This is useful for generating a summary of peripheral registers

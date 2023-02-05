@@ -27,17 +27,17 @@ SFR_BASE   = 0x40000000
 
 class SerialPortTraceReader(TraceReaderInterface):
     """Read trace buffer values from a serial port back end.
-    
+
     Each value must be in one of the following two formats and terminated with
     a new line character.
       hex format: 0xXXXXXXXX
       decimal format: XXXXXXXXX
-    
+
     Trace buffer data must be the only thing output on this serial port.
     """
     def __init__(self, serial_port: serial.Serial):
         """Initializes the serial port trace reader.
-        
+
         Args:
           serial_port: An already open and configured serial port. This should
                        already be set up with the proper settings for baud
@@ -62,7 +62,7 @@ class SerialPortTraceReader(TraceReaderInterface):
 
 def live_trace(reader, functions, variables, registers):
     """Start an execution tracer live trace on the selected serial port.
-    
+
     Continuously reads trace values from the serial port and converts them to
     human readable on stdout.
 
@@ -75,7 +75,7 @@ def live_trace(reader, functions, variables, registers):
       variables: Dictionary that maps MCU addresses to variable names.
       registers: Dictionary that maps MCU addresses to
                  parse_svd.PeripheralRegister objects.
-  
+
     """
     tracer = ExecTraceParser(functions, variables, registers)
     tracer.set_flash_base(FLASH_BASE)
@@ -116,7 +116,7 @@ def main():
         pass
     else:
         print("WARNING: No variables found in %s" % map_file)
-    
+
     registers = get_mcu_register_set(svd_file, make, model)
     if registers:
         # Can trace registers found here

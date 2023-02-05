@@ -1,9 +1,9 @@
 class TraceReaderInterface:
     """Interface expected by ExecTraceParser for returning trace buffer values.
-    
+
     Users of this module must extend this class to provide trace buffer values
     to ExecTraceParser. How values are retrieved from an execution tracer
-    backend is implementation specific. 
+    backend is implementation specific.
     """
 
     """Value to return after the last value has been read."""
@@ -25,7 +25,7 @@ class ExecTraceParser:
     """Translates trace buffer values into human readable text."""
     def __init__(self, functions, variables, registers):
         """Initialize the parser with all of the look-up dictionaries.
-        
+
         Args:
           functions: Dictionary that maps MCU addresses to function names.
           variables: Dictionary that maps MCU addresses to variable names.
@@ -74,7 +74,7 @@ class ExecTraceParser:
 
     def reset_indent(self):
         """Resets the indent level.
-        
+
         This is necessary if the traces continue through a fault situation and
         into a restart of the MCU. The nesting must be reset to 0. The parser
         knows of this condition due to the trace parser version trace, which is
@@ -84,7 +84,7 @@ class ExecTraceParser:
 
     def get_func_name(self, value):
         """Translate a raw trace value into its corresponding function name.
-        
+
         Args:
           value: A raw function entry or function exit trace buffer value.
 
@@ -100,7 +100,7 @@ class ExecTraceParser:
 
     def get_var_name(self, value):
         """Translate a raw trace value into its corresponding variable name.
-        
+
         Args:
           value: A raw variable trace buffer value.
 
@@ -116,7 +116,7 @@ class ExecTraceParser:
 
     def get_sfr_name(self, value):
         """Translate a raw trace value into its corresponding register name.
-        
+
         Args:
           value: A raw SFR trace buffer value.
 
@@ -189,7 +189,7 @@ class ExecTraceParser:
 
         Args:
           trace_reader: A concrete implementation of TraceReaderInterface.
-        
+
         Returns:
           True if there are more values to read.
           False if the end of the buffer has been reached.
@@ -226,7 +226,7 @@ class ExecTraceParser:
         For TraceReaderInterface implementations that do not signal end of
         buffer (e.g. live trace scenarios), it will be necessary to terminate
         execution using ^C.
-        
+
         Args:
           trace_reader: A concrete implementation of TraceReaderInterface.
         """

@@ -22,7 +22,7 @@ linker_section_ids = {
 def read_gnu_map_file(file_name):
     """Read in a GNU map file and return dictionaries that map memory addresses
     to function names and variable names.
-    
+
     The code should be compiled with -ffunction-sections and -fdata-sections so
     that all function names, including static functions, appear in the map
     file.
@@ -30,11 +30,11 @@ def read_gnu_map_file(file_name):
     execution tracing of static variables, the suggestion is to make them not
     static for a debug build, or to use a macro that can selectively enable
     or disable the static keyword.
-    
+
     Args:
       file-name - Absolute or relative path to the GNU map file for the program
                   being traced.
-    
+
     Returns:
       The tuple (functions, variables)
       functions - A dictionary that maps MCU memory addresses to function names.
@@ -91,12 +91,12 @@ def read_gnu_map_file(file_name):
                             # Variable name and address found
                             address = int(match_results.groups()[0], 16)
                             variables[address] = match_results.groups()[1]
-    
+
     return (functions, variables)
 
 def main():
     """Test retrieval of functions and variables dictionaries.
-    
+
     This module is not meant to be used directly when analyzing execution trace
     logs. Direct use is for dumping the functions and variables dictionaries
     directly to stdout. This is useful for generating a summary of function
