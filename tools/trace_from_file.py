@@ -21,7 +21,7 @@ class TextFileTraceReader(TraceReaderInterface):
         if len(line) > 0:
             value = int(line, 0)
         else:
-            value = -1
+            value = TraceReaderInterface.END_OF_TRACE_BUFFER
         return value
 
 def live_trace(reader, functions, variables, registers):
