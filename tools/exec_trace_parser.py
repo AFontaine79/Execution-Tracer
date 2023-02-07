@@ -31,14 +31,16 @@ class ExecTraceParser:
           variables: Dictionary that maps MCU addresses to variable names.
           registers: Dictionary that maps MCU addresses to
                      parse_svd.PeripheralRegister objects.
-          """
+
+        Note:
+          The parser needs to know the MCU's base addresses for flash, RAM and
+          peripheral register regions in order to use the look-up dictionaries
+          properly.
+          These values can be assigned explicitly from separate functions.
+        """
         self.functions = functions
         self.variables = variables
         self.registers = registers
-        # The parser needs to know the MCU's base addresses for flash, RAM and
-        # peripheral register regions in order to use the look-up dictionaries
-        # properly.
-        # These values can be assigned explicitly from separate functions.
         self.FLASH_BASE = 0
         self.RAM_BASE = 0
         self.SFR_BASE = 0
