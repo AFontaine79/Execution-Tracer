@@ -143,7 +143,7 @@ class ExecTraceParser:
         ver_major = (value >> 8) & 0xFF
         ver_minor = (value >> 0) & 0xFF
         self.reset_indent()
-        print("Tracer version %c%d.%d" % (ver_char, ver_major, ver_minor))
+        print("**** Tracer version %c%d.%d ****" % (ver_char, ver_major, ver_minor))
 
     def trace_reset(self, value):
         """Translate a TRACE_ProcessorReset() trace to human readable output."""
