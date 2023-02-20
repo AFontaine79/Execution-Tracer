@@ -18,6 +18,8 @@
 #define BUFFER_INDEX_MASK       (BUFFER_LENGTH_IN_WORDS - 1)
 #define BUFFER_MAX_CAPACITY     (BUFFER_LENGTH_IN_WORDS - 1)
 
+#define EXEC_TRACE_INIT_MAGIC   (0xA5B4C123)
+
 /**
  * Convenience functions for checking buffer status.
  * Note: It is not necessary to call TRACE_IsEmpty() in your idle handler.
@@ -169,5 +171,16 @@ typedef struct {
 
 
 extern ExecTracer_t m_exec_trace;
+
+
+/**
+ * @brief       Initializes the trace buffer correctly for both power on and reset.
+ * Note:        In the case noinit RAM is used, the buffer is preserved through
+ *              reset.
+ *              To capture traces after a crash scenario, all trace entries should
+ *              be dumped to the back end after calling this function and before
+ *              starting normal operation.
+ */
+void TRACE_Init(void);
 
 #endif /* LIB_INCLUDE_EXECUTION_TRACER_H_ */
