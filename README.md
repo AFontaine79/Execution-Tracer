@@ -4,6 +4,10 @@
 
 Execution Tracer is a simple, minimalist, low overhead and open-source tool to help you understand the sequencing of your programs.  It is designed to be usable on any system with a minimum amount of effort and without any extra hardware.  It gives you real trace data on exactly what events occurred and in what order.  It can provide this information in real time or after the fact (e.g. from a log capture triggered by a fault).
 
+## Status
+
+This project is in alpha stage.  More work is needed in terms of baseline functionality, example code and basic documentation.  At that time it will transition to beta stage and open to early collaborators.  ETA for beta stage is sometime May 2023.
+
 ## Motivation
 
 Reconstructing the events that lead to a fault or understanding the real-time behavior of an embedded system can be notoriously difficult.  Off the shelf commercial solutions, such as SystemView or J-Trace are out of reach for many developers.  They are also overkill.  While I think such tools are nice, I've tackled some of the most difficult problems of my career with a much simpler solution and I wish to share it with others.
