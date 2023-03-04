@@ -169,6 +169,31 @@ typedef struct {
     uint32_t        last_value;
 } ExecTracer_t;
 
+typedef struct {
+    /**
+     * @brief   Function for writing to the backend (UART, RTT, etc.)
+     *          Required
+     * Note:    This function may block as long as necessary and must be done
+     *          with the provided buffer before it returns.
+     * @param   p_data Data to be written to the backend.
+     * @param   size Length of the data to be written.
+     */
+    void (*write)(uint8_t * p_data, uint16_t size);
+    /**
+     * @brief   Lock function to prevent reentrancy when dumping logs
+     *          Optional - Set to NULL if not used
+     * Note:    This is only necessary if calling DumpExecTraceLog from more
+     *          than one execution context (which is typically the idle thread).
+     */
+    void (*lock)(void);
+    /**
+     * @brief   Unlock function to prevent reentrancy when dumping logs
+     *          Optional - Set to NULL if not used
+     * Note:    This is only necessary if calling DumpExecTraceLog from more
+     *          than one execution context.
+     */
+    void (*unlock)(void);
+} ExecTraceCallbacks_t;
 
 extern volatile ExecTracer_t m_exec_trace;
 
@@ -180,7 +205,19 @@ extern volatile ExecTracer_t m_exec_trace;
  *              To capture traces after a crash scenario, all trace entries should
  *              be dumped to the back end after calling this function and before
  *              starting normal operation.
+ * @param       p_callbacks Implementations provided by the client
  */
-void TRACE_Init(void);
+void TRACE_Init(ExecTraceCallbacks_t * p_callbacks);
+
+/**
+ * @brief       Dump all log entries to the backend using the user-provided write
+ *              function.
+ * Note:        Call this function in some kind of background loop, preferably
+ *              in the idle thread.
+ * Note:        When using NOINIT configuration, it also useful to call this
+ *              function in the startup sequence anywhere after TRACE_Init has
+ *              been called and the backend interface is active and ready.
+ */
+void DumpExecTraceLog(void);
 
 #endif /* LIB_INCLUDE_EXECUTION_TRACER_H_ */
