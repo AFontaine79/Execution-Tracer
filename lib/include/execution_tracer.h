@@ -146,7 +146,7 @@
 #define TRACE_VariableValue(var)    TRACE_Put(                                  \
     ((TRACE_IDCODE_VARIABLE_VALUE << TRACE_IDCODE_Pos) & TRACE_IDCODE_Msk) |    \
     ((((uintptr_t)(&var) - RAM_BASE) << TRACE_DATA_Pos) & TRACE_DATA_Msk));     \
-    TRACE_Put(var)
+    TRACE_Put((uint32_t)var)
 
 /**
  * @brief       Trace a memory mapped peripheral register value
@@ -170,7 +170,7 @@ typedef struct {
 } ExecTracer_t;
 
 
-extern ExecTracer_t m_exec_trace;
+extern volatile ExecTracer_t m_exec_trace;
 
 
 /**

@@ -13,7 +13,6 @@ class LinkerSection(Enum):
     BSS = 4
 
 linker_section_ids = {
-    """Dictionary to map map-file section name to enum identifier."""
     ".text": LinkerSection.TEXT,
     ".data": LinkerSection.DATA,
     ".bss": LinkerSection.BSS
