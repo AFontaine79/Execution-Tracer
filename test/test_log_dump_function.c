@@ -120,3 +120,13 @@ void test_Uint32sAreCorrectlyDecodedToHexStrings(void)
     DumpExecTraceLog();
     TEST_ASSERT_EQUAL(m_num_writes_expected, m_num_writes_actual);
 }
+
+void test_WriteFunctionNotCalledWhenTraceBufferIsEmpty(void)
+{
+    TRACE_Init(&test_callbacks_with_lock);
+    TRACE_Clear();
+    DumpExecTraceLog();
+    TEST_ASSERT_TRUE(m_lock_called);
+    TEST_ASSERT_FALSE(m_write_called);
+    TEST_ASSERT_TRUE(m_unlock_called);
+}
