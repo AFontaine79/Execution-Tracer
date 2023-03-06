@@ -5,6 +5,7 @@
  *      Author: Aaron Fontaine
  */
 
+#include <string.h>
 #include "execution_tracer.h"
 #include "execution_tracer_private.h"
 
@@ -61,7 +62,12 @@ void DumpExecTraceLog(void)
         m_exec_trace_callbacks.lock();
     }
 
-    while(!TRACE_IsEmpty())
+    if (TRACE_IsFull())
+    {
+        memset(&out_buffer[2], m_hex_to_ascii[TRACE_IDCODE_BUFFER_FULL], 8);
+        m_exec_trace_callbacks.write((uint8_t*)out_buffer, 11);
+    }
+    while (!TRACE_IsEmpty())
     {
         trace_value = TRACE_Get();
         _ConvertUint32ToHexString(trace_value, &out_buffer[2]);

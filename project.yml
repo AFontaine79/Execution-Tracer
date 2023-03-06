@@ -56,20 +56,30 @@
     - CONFIG_SFR_BASE=0x00000000      # Normally 0x40000000 on ST
     - CONFIG_STOP_AFTER_RESET=0
     - CONFIG_USE_NO_INIT=0
-    - CONFIG_BUFFER_LENGTH=32
   :overwrite_disabled: &overwrite_disabled_defines
     - CONFIG_ALLOW_OVERWRITE=0
   :overwite_enabled: &overwrite_enabled_defines
     - CONFIG_ALLOW_OVERWRITE=1
+  :medium_size_buffer: &medium_buffer_defines
+    - CONFIG_BUFFER_LENGTH=32
+  :small_size_buffer: &small_buffer_defines
+    - CONFIG_BUFFER_LENGTH=8
   :test:
     - *common_defines
     - *overwrite_disabled_defines
+    - *medium_buffer_defines
   :test_get_and_put_overwrite_disabled:
     - *common_defines
     - *overwrite_disabled_defines
+    - *medium_buffer_defines
   :test_get_and_put_overwrite_enabled:
     - *common_defines
     - *overwrite_enabled_defines
+    - *medium_buffer_defines
+  :test_log_dump_function:
+    - *common_defines
+    - *overwrite_disabled_defines
+    - *small_buffer_defines
 
 :cmock:
   :mock_prefix: mock_
