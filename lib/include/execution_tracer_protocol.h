@@ -28,6 +28,8 @@
 #define TRACE_IDCODE_VARIABLE_VALUE	    6
 #define TRACE_IDCODE_SFR_VALUE		    7
 
+#define TRACE_IDCODE_BUFFER_FULL        15      /**< Traced when the buffer fills before calling the log dump routine */
+
 /**
  * These defines follow the style of SFR bitfield macros
  * in ST CMSIS device headers.

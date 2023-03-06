@@ -143,7 +143,7 @@ class ExecTraceParser:
         ver_major = (value >> 8) & 0xFF
         ver_minor = (value >> 0) & 0xFF
         self.reset_indent()
-        print("**** Tracer version %c%d.%d ****" % (ver_char, ver_major, ver_minor))
+        print("**** Tracer protocol version %c%d.%d ****" % (ver_char, ver_major, ver_minor))
 
     def trace_reset(self, value):
         """Translate a TRACE_ProcessorReset() trace to human readable output."""
@@ -183,6 +183,10 @@ class ExecTraceParser:
         self.print_indent()
         print("%s = 0x%08X" % (self.get_sfr_name(addr_value), reg_value))
 
+    def trace_buff_full_indication(self):
+        """Print a warning indicating the buffer was full"""
+        print("**** Trace buffer full - possible data loss ****")
+
     def read_and_trace_next(self, trace_reader: TraceReaderInterface):
         """Read the next value from the trace reader and translate it to human
         readable output.
@@ -218,6 +222,8 @@ class ExecTraceParser:
         elif idcode == 7:
             value2 = trace_reader.read_next()
             self.trace_sfr(value, value2)
+        elif idcode == 15:
+            self.trace_buff_full_indication()
 
         return True
 
