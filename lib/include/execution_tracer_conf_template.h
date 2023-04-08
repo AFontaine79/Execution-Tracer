@@ -44,7 +44,7 @@
  * REQUIRES USE_NOINIT_RAM_FOR_TRACING to be enabled.
  * NOT YET IMPLEMENTED.
  */
-#define STOP_TRACING_AFTER_RESET        (@EXEC_TRACE_STOP_TRACING_AFTER_RESET@)
+#define STOP_TRACING_AFTER_RESET        (@EXEC_TRACE_STOP_AFTER_RESET@)
 
 /**
  * Place the trace buffer and control structure in noinit RAM.  This allows
