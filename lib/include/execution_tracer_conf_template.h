@@ -13,7 +13,9 @@
  * offsets from the start of flash.  FLASH_BASE should equal the start of
  * FLASH space on your system.
  */
+#ifndef FLASH_BASE
 #define FLASH_BASE      (@EXEC_TRACE_FLASH_BASE@)
+#endif
 
 /**
  * RAM_BASE should equal the start of RAM space on your system.
