@@ -2,28 +2,23 @@
 
 ## Overview
 
-Execution Tracer is a simple, minimalist, low overhead and open-source tool to help you understand the sequencing of your programs.  It is designed to be usable on any system with a minimum amount of effort and without any extra hardware.  It gives you real trace data on exactly what events occurred and in what order.  It can provide this information in real time or after the fact (e.g. from a log capture triggered by a fault).
+Execution Tracer is a flexible, minimalist, low overhead and open-source tool to help you understand the sequencing of your programs.  It is designed to be usable on any system with a minimum amount of effort and without any extra hardware.  You decide what to trace by placing TRACE macros throughout your program.  Unlike conventional logging macros, these TRACE macros are lightweight, incurring minimal CPU overhead.
 
 ## Status
 
 This project is in alpha stage.  More work is needed in terms of baseline functionality, example code and basic documentation.  At that time it will transition to beta stage and open to early collaborators.  ETA for beta stage is sometime May 2023.
 
-## Motivation
-
-Reconstructing the events that lead to a fault or understanding the real-time behavior of an embedded system can be notoriously difficult.  Off the shelf commercial solutions, such as SystemView or J-Trace are out of reach for many developers.  They are also overkill.  While I think such tools are nice, I've tackled some of the most difficult problems of my career with a much simpler solution and I wish to share it with others.
-
 ## Theory of Operation
 
-The main concept is a trace buffer and a set of macros to write to it.  The macros must complete as fast as possible.  Decoding of the buffer is done after the fact by a backend.  There are multiple possibilities for the backend.
+The following diagram shows the general theory of operation.
 
-- Have a background thread deliver raw contents in real time to RTT, SWO or serial port.
-  - Save this stream to a file for processing later.
-  - Process it on the fly with a Python script.
-- Rather than stream in real-time, snapshot the buffer after a crash or hard fault.
-  - Save this snapshot to flash or RAM.
-  - Offload the snapshot later as part of a crashlytics report.
+![Execution Tracer Component Diagram](doc/images/exec-tracer-components.png)
 
-The trace log is in a raw binary format.  Effective processing requires a MAP and possibly an SVD file.  Future work may also make use of the ELF file (with DWARF info).  This means you must preserve the build artifacts for the firmware image being analyzed.  Processing is always done off-target and is handled via cross-platform Python scripts.
+The main concept is a circular trace buffer and a set of macros to write to it.  The macros must complete as fast as possible.  Forwarding of trace buffer values to a physical interface is done later and in the background, typically by the Idle thread.
+
+The trace log is in a raw binary format.  Effective processing requires a MAP file and possibly an SVD file.  Future work may also make use of the ELF file (with DWARF info).  This means you must preserve the build artifacts for the firmware image being analyzed.  Processing is always done off-target and is handled via cross-platform Python scripts.
+
+"Physical interface" here is open to interpretation.  It could be a direct serial interface such as UART or RTT, an RF interface such as BLE or even a storage medium such as flash.  How the trace values get from the "write shim" to the Python scripts is up to the developer.
 
 ## Goals
 

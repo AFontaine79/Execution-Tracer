@@ -1,0 +1,51 @@
+@startuml
+
+skinparam legendBackgroundColor #FFFFFF
+skinparam legendBorderColor #FFFFFF
+skinparam legendEntrySeparator #FFFFFF
+
+legend top left
+    <#FFFFFF,#FFFFFF>|<#cornflowerblue>| Componenents provided by user|
+    |<#orchid>     | Components provided by Execution Tracer|
+    |<#limegreen>| Components provided by vendor|
+    |<#darkgreen>| Hardware interfaces|
+endlegend
+
+skinparam componentStyle rectangle
+
+[All Threads\nand ISRs] #cornflowerblue
+[Idle Thread] #cornflowerblue
+[User Provided\nWrite Shim] #cornflowerblue
+[Physical\nInterface] #darkgreen
+[Exec Tracer\nPython Scripts] #orchid
+[MAP file] #cornflowerblue
+[SVD file] #limegreen
+[Terminal] #darkgreen
+
+[User Provided\nWrite Shim] --> WriteCB
+
+package "Execution Tracer" {
+  database "Trace buffer" #orchid
+  [TRACE Macros] #orchid
+  [DumpExecTraceLogs] #orchid
+  [TRACE Macros] <. [All Threads\nand ISRs] : use
+  [DumpExecTraceLogs] <.. [Idle Thread] : run in\nbackground
+  [TRACE Macros] --> "Trace buffer" : TRACE_Put
+  "Trace buffer" <-- [DumpExecTraceLogs] : TRACE_Get
+  [DumpExecTraceLogs] .> WriteCB : use
+  note top of [DumpExecTraceLogs]
+    Can write each trace
+    entry in raw binary
+    form or in text file
+    friendly format using
+    format string "0x%08X\n"
+  end note
+}
+
+[User Provided\nWrite Shim] --> [Physical\nInterface] : platform\nspecific\nHAL
+[Physical\nInterface] <- [Exec Tracer\nPython Scripts] : read raw\nvalues
+[MAP file] <.. [Exec Tracer\nPython Scripts] : use
+[SVD file] <.. [Exec Tracer\nPython Scripts] : use
+[Exec Tracer\nPython Scripts] -> [Terminal] : write human\nreadable output
+
+@enduml
