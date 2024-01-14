@@ -5,7 +5,7 @@ skinparam legendBorderColor #FFFFFF
 skinparam legendEntrySeparator #FFFFFF
 
 legend top left
-    <#FFFFFF,#FFFFFF>|<#cornflowerblue>| Componenents provided by user|
+    <#FFFFFF,#FFFFFF>|<#cornflowerblue>| Components provided by user|
     |<#orchid>     | Components provided by Execution Tracer|
     |<#limegreen>| Components provided by vendor|
     |<#darkgreen>| Hardware interfaces|
@@ -30,8 +30,8 @@ package "Execution Tracer" {
   [DumpExecTraceLogs] #orchid
   [TRACE Macros] <. [All Threads\nand ISRs] : use
   [DumpExecTraceLogs] <.. [Idle Thread] : run in\nbackground
-  [TRACE Macros] --> "Trace buffer" : TRACE_Put
-  "Trace buffer" <-- [DumpExecTraceLogs] : TRACE_Get
+  [TRACE Macros] --> [Trace buffer] : TRACE_Put
+  [Trace buffer] <-- [DumpExecTraceLogs] : TRACE_Get
   [DumpExecTraceLogs] .> WriteCB : use
   note top of [DumpExecTraceLogs]
     Can write each trace
