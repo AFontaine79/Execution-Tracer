@@ -12,7 +12,7 @@ This project is in alpha stage.  More work is needed in terms of baseline functi
 
 The following diagram shows the general theory of operation.
 
-![Execution Tracer Component Diagram](doc/images/exec-tracer-components.png)
+![Execution Tracer Component Diagram](doc/images/out/exec-tracer-components/exec-tracer-components.png)
 
 The main concept is a circular trace buffer and a set of macros to write to it.  The macros must complete as fast as possible.  Forwarding of trace buffer values to a physical interface is done later and in the background, typically by the Idle thread.
 
