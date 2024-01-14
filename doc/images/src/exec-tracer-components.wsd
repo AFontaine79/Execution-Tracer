@@ -1,4 +1,4 @@
-@startuml
+@startuml "Exec_Tracer_Components"
 
 skinparam legendBackgroundColor #FFFFFF
 skinparam legendBorderColor #FFFFFF
