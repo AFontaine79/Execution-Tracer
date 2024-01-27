@@ -2,7 +2,7 @@
 
 ## Overview
 
-Execution Tracer is a flexible, minimalist, low overhead and open-source tool to help you understand the sequencing of your programs.  It is designed to be usable on any system with a minimum amount of effort and without any extra hardware.  You decide what to trace by placing TRACE macros throughout your program.  Unlike conventional logging macros, these TRACE macros are lightweight, incurring minimal CPU overhead.
+Execution Tracer is a flexible, minimalist, low overhead and open-source tool to help you understand the sequencing of your programs.  It is designed to be usable on any MCU with a minimum amount of effort and without any extra hardware.  You decide what to trace by placing TRACE macros throughout your program.  Unlike conventional logging macros, these TRACE macros are lightweight, incurring minimal CPU overhead.
 
 ## Status
 
@@ -36,8 +36,7 @@ For the on-target code, the TRACE macros can be considered the front end. Everyt
   - Save this stream to a file for processing later.
   - Process this stream in real time with the Python script.
 - Snapshot the buffer after a crash or hard fault.
-  - Save this snapshot to flash or RAM.
-  - Offload the snapshot later as part of a crashlytics report.
+  - Save this snapshot to flash or RAM and offload the snapshot later as part of a crashlytics report.
 
 ### Example Sequence Diagram
 
@@ -52,9 +51,9 @@ This diagram shows a configuration streaming trace data in real time over UART t
 
 ## Goals
 
-- Device and toolchain agnostic
-  - There is currently a compromise on this front for rendering of PlantUML documents in VS Code
-- Development platform agnostic
+- MCU vendor agnostic
+- Laptop OS and IDE agnostic
+  - Currently, rendering of PlantUML documents is done using VS Code. Future enhancements will allow rendering from the command line.
 - Simple to use (low learning curve)
 - Lightweight enough to pull into any project
 - No special equipment or software license required
