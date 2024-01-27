@@ -35,7 +35,7 @@ For the on-target code, the TRACE macros can be considered the front end. Everyt
 - Have a background thread deliver raw contents in real time to RTT, SWO or serial port.
   - Save this stream to a file for processing later.
   - Process this stream in real time with the Python script.
-- Rather than stream in real-time, snapshot the buffer after a crash or hard fault.
+- Snapshot the buffer after a crash or hard fault.
   - Save this snapshot to flash or RAM.
   - Offload the snapshot later as part of a crashlytics report.
 
