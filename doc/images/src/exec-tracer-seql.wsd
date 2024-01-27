@@ -1,0 +1,61 @@
+@startuml "Exec_Tracer_Sequence_Diagram"
+
+participant Threads #cornflowerblue
+participant IRQHandlers as IRQs #cornflowerblue
+participant "Trace\nInterface" as Macros #orchid
+queue       "Trace\nBuffer" as TraceLog #orchid
+participant "Idle\nThread" as Idle #cornflowerblue
+participant "Dump Trace\nLog" as Dump #orchid
+participant "Write\nShim" as WriteShim #cornflowerblue
+participant "Vendor\nHAL" as HAL #limegreen
+boundary    "UART\USB\nSerial" as COM #darkgreen
+participant "Python\nScripts" as Python #orchid
+boundary    "Terminal\nstdout" as Terminal #darkgreen
+
+loop
+Threads -> Macros: TRACE_xxx()
+activate Macros
+  Macros -> TraceLog: TRACE_Put()
+  activate TraceLog
+  return
+return
+IRQs -> Macros: TRACE_xxx()
+activate Macros
+  Macros -> TraceLog: TRACE_Put()
+  activate TraceLog
+  return
+return
+end
+
+Idle -> Dump
+loop While trace log not empty
+activate Dump
+  Dump -> TraceLog: TRACE_Get()
+  activate TraceLog
+  return
+  Dump -> Dump: Optional\nformatting
+  Dump -> WriteShim: write()
+  activate WriteShim
+    WriteShim -> HAL: Translate\nto HAL API
+    activate HAL
+      HAL -> COM: Output to\ninterface
+      activate COM
+      return: Bytes\nwritten
+    return
+  return
+end
+return
+
+activate Python
+loop
+Python -> COM: Read raw\nvalue
+  activate COM
+  return
+Python -> Python: Translate to\nhuman\readable
+Python -> Terminal: print()
+activate Terminal
+return
+end
+deactivate Python
+
+@enduml

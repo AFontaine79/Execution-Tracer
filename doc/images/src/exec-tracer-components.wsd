@@ -1,0 +1,53 @@
+@startuml "Exec_Tracer_Components"
+
+skinparam legendBackgroundColor #FFFFFF
+skinparam legendBorderColor #FFFFFF
+skinparam legendEntrySeparator #FFFFFF
+
+legend top left
+    <#FFFFFF,#FFFFFF>|<#CornflowerBlue>| Components provided by user|
+    |<#DeepSkyBlue> | ExecTraceCallbacks_t interface implemented by user shims|
+    |<#Orchid>     | Components provided by Execution Tracer|
+    |<#LimeGreen>| Components provided by vendor|
+    |<#DarkGreen>| Hardware interfaces|
+endlegend
+
+skinparam componentStyle rectangle
+
+[All Threads\nand ISRs] as AllThreads #CornflowerBlue
+[Idle Thread] as IdleThread #CornflowerBlue
+[User Provided\nShims] as UserShims #CornflowerBlue
+[Physical\nInterface] as PhysicalInterface #DarkGreen
+[Exec Tracer\nPython Scripts] as PythonScripts #Orchid
+[MAP file] as MapFile #CornflowerBlue
+[SVD file] as SvdFile #LimeGreen
+[Terminal] as Terminal #DarkGreen
+() Callbacks #DeepSkyBlue
+
+Callbacks - UserShims
+
+package "Execution Tracer" {
+  database "Trace buffer" as TraceBuffer #Orchid
+  [TRACE Macros] as TraceMacros #Orchid
+  [DumpExecTraceLogs] as LogFunction #Orchid
+  TraceMacros <. AllThreads : use
+  LogFunction <.. IdleThread : run in\nbackground
+  TraceMacros --> TraceBuffer : TRACE_Put
+  TraceBuffer <-- LogFunction : TRACE_Get
+  Callbacks <.. LogFunction : use
+  note top of LogFunction
+    Can write each trace
+    entry in raw binary
+    form or in text file
+    friendly format using
+    format string "0x%08X\n"
+  end note
+}
+
+UserShims --> PhysicalInterface : platform\nspecific\nHAL
+PhysicalInterface <- PythonScripts : read raw\nvalues
+MapFile <.. PythonScripts : use
+SvdFile <.. PythonScripts : use
+PythonScripts -> Terminal : write human\nreadable output
+
+@enduml

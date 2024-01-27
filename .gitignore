@@ -3,6 +3,7 @@
 
 ### Build Files ###
 build/
+tools/__pycache__/
 
 ### Eclipse ###
 .metadata
@@ -128,6 +129,7 @@ Temporary Items
 !.vscode/launch.json
 !.vscode/extensions.json
 !.vscode/*.code-snippets
+!.vscode/settings.json
 
 # Local History for Visual Studio Code
 .history/
